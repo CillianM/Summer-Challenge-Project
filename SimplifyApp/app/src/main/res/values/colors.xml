@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ff6600</color>
+    <color name="colorPrimaryDark">#e65b00</color>
+    <color name="colorAccent">#333</color>
+    <color name="orange_button">#CC5216</color>
+    <color name="orange_button_ripple">#FF7421</color>
+    <color name="gray_button">#F1EFEB</color>
+    <color name="gray_button_ripple">#CCC9C4</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray">#6B6B6B</color>
+    <color name="dialog_blue_text">#0288D1</color>
+    <color name="inactive_button_color">#D0D0D0</color>
+    <color name="tab_bg">#E8E6E6</color>
+    <color name="dark_gray">#333333</color>
+    <color name="light_gray">#808080</color>
+</resources>

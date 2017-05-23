@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    tools:context="com.mastercard.simplifyapp.CoverActivity"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_weight="70"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.mastercard.simplifyapp.widgets.SimplifyTextView
+                android:id="@+id/total"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="0.0"
+                android:textSize="60dp"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_weight="50"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/checkout_items"
+                android:layout_gravity="center_horizontal" />
+
+            <com.github.clans.fab.FloatingActionMenu
+                android:id="@+id/menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                fab:menu_colorNormal="@color/colorPrimary"
+                fab:menu_colorPressed="@color/colorPrimaryDark"
+                fab:menu_colorRipple="#99FFFFFF"
+                >
+
+                <com.github.clans.fab.FloatingActionButton
+                    android:id="@+id/scan_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/barcode"
+                    fab:fab_colorNormal="@color/colorPrimary"
+                    fab:fab_colorPressed="@color/colorPrimary"
+                    fab:fab_size="mini"
+                    fab:fab_label="Scan barcode"
+                    />
+
+                <com.github.clans.fab.FloatingActionButton
+                    android:id="@+id/photo_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/camera"
+                    fab:fab_colorNormal="@color/colorPrimary"
+                    fab:fab_colorPressed="@color/colorPrimary"
+                    fab:fab_size="mini"
+                    fab:fab_label="Take Picture"
+                    />
+
+            </com.github.clans.fab.FloatingActionMenu>
+        </RelativeLayout>
+    </LinearLayout>
+
+
+
+</FrameLayout>
