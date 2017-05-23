@@ -11,7 +11,7 @@ import android.widget.ListView;
 
 import com.mastercard.simplifyapp.R;
 import com.mastercard.simplifyapp.StoreItem;
-import com.mastercard.simplifyapp.StoreListAdapter;
+import com.mastercard.simplifyapp.adapters.StoreListAdapter;
 import com.mastercard.simplifyapp.widgets.SimplifyTextView;
 
 import java.util.ArrayList;

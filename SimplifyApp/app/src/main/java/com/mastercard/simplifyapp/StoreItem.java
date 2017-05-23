@@ -5,12 +5,25 @@ package com.mastercard.simplifyapp;
  */
 
 public class StoreItem {
+    private String name;
+    private String description;
+    private int price;
+    private int quantity;
+
 
     public StoreItem(String name, String description, int price) {
         this.name = name;
         this.description = description;
         this.price = price;
+        this.quantity = 1;
     }
+    public StoreItem(String name, String description, int price, int quantity) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
 
     public String getName() {
         return name;
@@ -36,12 +49,18 @@ public class StoreItem {
         this.price = price;
     }
 
-    private String name;
-    private String description;
-    private int price;
+
 
 
     public String getPriceString() {
         return Integer.toString(price);
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }
