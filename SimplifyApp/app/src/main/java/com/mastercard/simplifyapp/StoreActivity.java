@@ -12,10 +12,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import com.mastercard.simplifyapp.adapters.DrawerListAdapter;
 import com.mastercard.simplifyapp.fragments.CheckoutFragment;
 import com.mastercard.simplifyapp.fragments.CustomerFragment;
-import com.mastercard.simplifyapp.fragments.StoreFragment;
+import com.mastercard.simplifyapp.fragments.SettingsFragment;
+import com.mastercard.simplifyapp.fragments.StockFragment;
 
 import java.util.ArrayList;
 
@@ -25,6 +28,7 @@ public class StoreActivity extends AppCompatActivity {
     RelativeLayout mDrawerPane;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
+    int count = 0;
     private static String TAG = StoreActivity.class.getSimpleName();
 
     // Arraylist of custom nav items for side bar
@@ -95,14 +99,27 @@ public class StoreActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if(count == 0)
+        {
+            count++;
+            Toast.makeText(this,"Press Back Again To Exit To Login",Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            finish();
+        }
+    }
+
+    @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
     }
 
-
     private void selectItemFromDrawer(int position) {
         Fragment fragment = null; //initialize empty fragment
+        count = 0;
         if(position == 0) {
             fragment = new CheckoutFragment();
         }
@@ -110,10 +127,10 @@ public class StoreActivity extends AppCompatActivity {
             fragment = new CustomerFragment();
         }
         else if(position == 2) {
-            fragment = new CustomerFragment();
+            fragment = new StockFragment();
         }
         else if(position == 3) {
-            fragment = new CustomerFragment();
+            fragment = new SettingsFragment();
         }
 
         //Replace current fragment

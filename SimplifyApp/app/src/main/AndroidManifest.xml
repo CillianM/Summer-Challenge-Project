@@ -30,7 +30,8 @@
         <activity
             android:name=".StoreActivity"
             android:label="@string/title_activity_store"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme">
+        </activity>
     </application>
 
 </manifest>
