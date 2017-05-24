@@ -16,6 +16,28 @@
             android:layout_weight="70"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/refund_switch"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.mastercard.simplifyapp.widgets.SimplifyTextView
+                android:id="@+id/refundStatus"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:layout_toLeftOf="@+id/refund_switch"
+                android:text="@string/sale"
+                android:textSize="20dp"/>
+
             <com.mastercard.simplifyapp.widgets.SimplifyTextView
                 android:id="@+id/total"
                 android:gravity="center"
@@ -47,7 +69,20 @@
                 fab:menu_colorNormal="@color/colorPrimary"
                 fab:menu_colorPressed="@color/colorPrimaryDark"
                 fab:menu_colorRipple="#99FFFFFF"
+                fab:menu_showShadow="true"
+                fab:menu_shadowColor="#66000000"
                 >
+
+                <com.github.clans.fab.FloatingActionButton
+                    android:id="@+id/confirm_transaction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/cart"
+                    fab:fab_colorNormal="@color/colorPrimary"
+                    fab:fab_colorPressed="@color/colorPrimary"
+                    fab:fab_size="mini"
+                    fab:fab_label="Checkout"
+                    />
 
                 <com.github.clans.fab.FloatingActionButton
                     android:id="@+id/scan_item"
