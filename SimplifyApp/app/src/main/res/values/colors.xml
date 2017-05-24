@@ -15,4 +15,7 @@
     <color name="tab_bg">#E8E6E6</color>
     <color name="dark_gray">#333333</color>
     <color name="light_gray">#808080</color>
+    <color name="warning_color">#f4511e</color>
+    <color name="hint_color">#42000000</color>
+    <color name="success_color">#009688</color>
 </resources>

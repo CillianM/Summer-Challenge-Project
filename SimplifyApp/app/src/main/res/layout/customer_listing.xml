@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <com.github.pavlospt.roundedletterview.RoundedLetterView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/letter_icon"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="15dp"
+        app:rlv_backgroundColorValue="@color/colorPrimary"
+        app:rlv_titleColor="@android:color/white"
+        app:rlv_titleSize="35dp" />
+
+
+
+    <TextView
+        android:id="@+id/customer_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:gravity="center_vertical"
+        android:textColor="#000"
+        android:text="Title"
+        android:textStyle="bold"
+        android:paddingStart="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@+id/letter_icon"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/letter_icon" />
+
+
+</RelativeLayout>

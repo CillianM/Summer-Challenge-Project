@@ -11,7 +11,7 @@ import android.widget.ListView;
 import com.github.clans.fab.FloatingActionButton;
 import com.mastercard.simplifyapp.adapters.CustomerListAdapter;
 import com.mastercard.simplifyapp.R;
-import com.simplify.android.sdk.Customer;
+import com.mastercard.simplifyapp.Customer;
 
 import java.util.ArrayList;
 
@@ -80,21 +80,11 @@ public class CustomerFragment extends Fragment {
 
     private void populateCustomerList() {
         customers = new ArrayList<>();
-        Customer customer1 = new Customer();
-        customer1.setName("Firdaus Liborius");
-        Customer customer2 = new Customer();
-        customer2.setName("Cas Brendan");
-        Customer customer3 = new Customer();
-        customer3.setName("Hyginos Givi");
-        Customer customer4 = new Customer();
-        customer4.setName("Paderau Servaas");
-        Customer customer5 = new Customer();
-        customer5.setName("Haimo Dmitar");
-        customers.add(customer1);
-        customers.add(customer2);
-        customers.add(customer3);
-        customers.add(customer4);
-        customers.add(customer5);
+        customers.add(new Customer("Firdaus Liborius"));
+        customers.add(new Customer("Cas Brendan"));
+        customers.add(new Customer("Hyginos Givi"));
+        customers.add(new Customer("Paderau Servaas"));
+        customers.add(new Customer("Haimo Dmitar"));
 
         CustomerListAdapter adapter = new CustomerListAdapter(getActivity(), customers);
 
@@ -102,9 +92,7 @@ public class CustomerFragment extends Fragment {
     }
 
     private void addItem() {
-        Customer customer = new Customer();
-        customer.setName("New Name");
-        customers.add(customer);
+        customers.add(new Customer("New Name"));
 
         CustomerListAdapter adapter = new CustomerListAdapter(getActivity(), customers);
 

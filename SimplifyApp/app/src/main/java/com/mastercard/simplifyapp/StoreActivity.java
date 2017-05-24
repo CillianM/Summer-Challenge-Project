@@ -20,7 +20,10 @@ import com.mastercard.simplifyapp.fragments.CustomerFragment;
 import com.mastercard.simplifyapp.fragments.SettingsFragment;
 import com.mastercard.simplifyapp.fragments.StockFragment;
 
+import java.security.KeyStore;
 import java.util.ArrayList;
+
+import javax.crypto.KeyGenerator;
 
 public class StoreActivity extends AppCompatActivity {
 
@@ -145,4 +148,5 @@ public class StoreActivity extends AppCompatActivity {
         // Close the drawer
         mDrawerLayout.closeDrawer(mDrawerPane);
     }
+
 }

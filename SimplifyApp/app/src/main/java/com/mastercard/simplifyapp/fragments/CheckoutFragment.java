@@ -1,14 +1,19 @@
 package com.mastercard.simplifyapp.fragments;
 
 import android.app.Fragment;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import com.github.clans.fab.FloatingActionButton;
+import android.support.annotation.RequiresApi;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.mastercard.simplifyapp.AuthenticateActivity;
 import com.mastercard.simplifyapp.R;
 import com.mastercard.simplifyapp.StoreItem;
 import com.mastercard.simplifyapp.adapters.StoreListAdapter;
@@ -25,8 +30,15 @@ public class CheckoutFragment extends Fragment {
     int MY_SCAN_REQUEST_CODE = 1;
     ListView savedItems;
     SimplifyTextView priceView;
-    FloatingActionButton scanBarcode,takePicture;
+    FloatingActionButton scanBarcode,takePicture,checkout;
     ArrayList<StoreItem> storeItems;
+    SwitchCompat willRefund;
+    SimplifyTextView refundStatusText;
+
+
+
+
+
     public CheckoutFragment() {
         // Required empty public constructor
     }
@@ -39,9 +51,34 @@ public class CheckoutFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_checkout, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
+        refundStatusText = (SimplifyTextView) getView().findViewById(R.id.refundStatus);
+        willRefund = (SwitchCompat) getView().findViewById(R.id.refund_switch);
+        willRefund.setOnClickListener(new AdapterView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isRefund = willRefund.isChecked();
+                if(isRefund)
+                {
+                    refundStatusText.setText(R.string.refund);
+                }
+                else
+                {
+                    refundStatusText.setText(R.string.sale);
+                }
+            }
+        });
+        checkout = (FloatingActionButton) getView().findViewById(R.id.confirm_transaction);
+        checkout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                commitTransaction();
+            }
+
+        });
         scanBarcode = (FloatingActionButton) getView().findViewById(R.id.scan_item);
         scanBarcode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,9 +114,27 @@ public class CheckoutFragment extends Fragment {
             }
         });
 
+
+
         populateStoreList();
 
+
     }
+
+    private void commitTransaction() {
+        Intent i = new Intent(this.getActivity(), AuthenticateActivity.class);
+        boolean isRefund = willRefund.isChecked();
+        if(isRefund)
+        {
+            i.putExtra("isRefund",isRefund);
+        }
+        else
+        {
+            i.putExtra("isRefund", isRefund);
+        }
+        startActivity(i);
+    }
+
 
     private void calculateTotal() {
         int total = 0;
