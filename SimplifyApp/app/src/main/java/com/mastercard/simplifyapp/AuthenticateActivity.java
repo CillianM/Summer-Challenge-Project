@@ -16,12 +16,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.mastercard.simplifyapp.adapters.DrawerListAdapter;
 import com.mastercard.simplifyapp.utility.FingerprintHandler;
 import com.mastercard.simplifyapp.widgets.SimplifyEditText;
 import com.mastercard.simplifyapp.widgets.SimplifyTextView;
@@ -48,8 +51,7 @@ import io.card.payment.CardIOActivity;
 import io.card.payment.CreditCard;
 
 public class AuthenticateActivity extends AppCompatActivity {
-    private static final int MY_SCAN_REQUEST_CODE = 1;
-    private SimplifyTextView message;
+
     private FingerprintManager fingerprintManager;
     private KeyguardManager keyguardManager;
     private KeyStore keyStore;
@@ -57,36 +59,53 @@ public class AuthenticateActivity extends AppCompatActivity {
     private Cipher cipher;
     private FingerprintManager.CryptoObject cryptoObject;
     private static final String KEY_NAME = "example_key";
-    private Card card = new Card();
 
-    ArrayList<Customer> list = new ArrayList<Customer>() {{
-        add(new Customer("Firdaus Liborius","example@gmail.com"));
-        add(new Customer("Cas Brendan","example@gmail.com"));
-        add(new Customer("Hyginos Givi","example@gmail.com"));
-        add(new Customer("Paderau Servaas","example@gmail.com"));
-        add(new Customer("Haimo Dmitar","example@gmail.com"));
-    }};
+    ArrayList<NavItem> mNavItems;
 
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authenticate);
-        FloatingActionButton scanCard = (FloatingActionButton) findViewById(R.id.scan_card);
-        scanCard.setOnClickListener(new View.OnClickListener() {
+
+        mNavItems = new ArrayList<>();
+        mNavItems.add(new NavItem("Fingerprint", "Use fingerprint to authenticate user", R.drawable.fingerprint));
+        mNavItems.add(new NavItem("Facial Recognition", "Use face to authenticate user", R.drawable.face));
+        mNavItems.add(new NavItem("Password", "Enter password set for user", R.drawable.textbox_password));
+        mNavItems.add(new NavItem("Pattern", "Enter pattern set for user", R.drawable.lock_pattern));
+
+        ListView optionsList = (ListView) findViewById(R.id.authenticate_options);
+        DrawerListAdapter adapter = new DrawerListAdapter(this, mNavItems);
+        optionsList.setAdapter(adapter);
+
+        optionsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
-            public void onClick(View v) {
-                onScanPress();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectAuth(position);
             }
-
         });
-        card.setExpMonth("1");
-        card.setExpYear("2000");
-        card.setNumber("123456543210");
-        card.setCvc("123");
 
 
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void selectAuth(int position) {
+        if(position == 0)
+        {
+            startFingerprintAuth();
+        }
+        else
+        {
+            Intent intent = new Intent(getApplicationContext(),ConfirmDetailsActivity.class);
+            intent.putExtra("valid",true);
+            startActivity(intent);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void startFingerprintAuth() {
         keyguardManager =
                 (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
         fingerprintManager =
@@ -121,84 +140,37 @@ public class AuthenticateActivity extends AppCompatActivity {
 
         generateKey();
         if (cipherInit()) {
+            final Activity activity = this;
             cryptoObject = new FingerprintManager.CryptoObject(cipher);
             FingerprintHandler helper = new FingerprintHandler(getApplicationContext(), new FingerprintHandler.FingerprintHelperListener() {
                 @Override
                 public void authenticationFailed(String error) {
-                    getCustomerData(false);
+                    Toast.makeText(activity,
+                            "Fingerprint authentication failed",
+                            Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(),ConfirmDetailsActivity.class);
+                    intent.putExtra("valid",false);
+                    startActivity(intent);
                 }
 
                 @Override
                 public void authenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-                    getCustomerData(true);
+                    Toast.makeText(activity,
+                            "Fingerprint authentication succeeded",
+                            Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(),ConfirmDetailsActivity.class);
+                    intent.putExtra("valid",true);
+                    startActivity(intent);
                 }
             });
             helper.setActivity(this);
             helper.startAuth(fingerprintManager, cryptoObject);
+            Toast.makeText(activity,
+                    "Scan fingerprint now",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void getCustomerData(final boolean successful) {
-        final ProgressBar fingerprintProgress = (ProgressBar) findViewById(R.id.fingerprint_progress);
-        final ImageView fingerprintError = (ImageView) findViewById(R.id.fingerprint_icon_error);
-        final ImageView fingerprintSuccess = (ImageView) findViewById(R.id.fingerprint_icon_success);
-        fingerprintProgress.setVisibility(View.VISIBLE);
-        int timeOut = 3000;
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(successful){
-                    Toast.makeText(getApplicationContext(),"Authentication succeeded.",Toast.LENGTH_LONG).show();
-                    fingerprintProgress.setVisibility(View.GONE);
-                    fingerprintSuccess.setVisibility(View.VISIBLE);
-                    hideFingerPrint("Fingerprint Scanned Successfully",true);
-                }
-                else {
-                    fingerprintProgress.setVisibility(View.GONE);
-                    fingerprintError.setVisibility(View.VISIBLE);
-                    hideFingerPrint("Error Scanning Fingerprint",false);
-                }
-            }
-        }, timeOut);
-    }
-
-    public void hideFingerPrint(String messageToDisplay, final boolean successful) {
-        message=  (SimplifyTextView) this.findViewById(R.id.fingerprint_message);
-        message.setText(messageToDisplay);
-        int timeOut = 1500;
-        final Activity activity = this;
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                RelativeLayout fingerprintLayout= (RelativeLayout) activity.findViewById(R.id.fingerprint_layout);
-                RelativeLayout formLayout = (RelativeLayout) activity.findViewById(R.id.cardform_layout);
-                fingerprintLayout.setVisibility(View.GONE);
-                formLayout.setVisibility(View.VISIBLE);
-                if(successful)
-                {
-                    Random rn = new Random();
-                    int range = list.size() + 1;
-                    int randomNum = rn.nextInt(range);
-                    if(randomNum == list.size())
-                    {
-                        randomNum -= 1;
-                    }
-                    Customer customer = list.get(randomNum);
-                    SimplifyEditText nameView = (SimplifyEditText) findViewById(R.id.user_name);
-                    nameView.setText(customer.getName());
-                    SimplifyEditText emailView = (SimplifyEditText) findViewById(R.id.user_email);
-                    emailView.setText(customer.getEmail());
-                    SimplifyEditText cardNumberView = (SimplifyEditText) findViewById(R.id.card_number);
-                    cardNumberView.setText(card.getNumber());
-                    SimplifyEditText cvvView = (SimplifyEditText) findViewById(R.id.card_cvv);
-                    cvvView.setText(card.getCvc());
-                    SimplifyEditText expiryView = (SimplifyEditText) findViewById(R.id.card_expiry);
-                    expiryView.setText(card.getExpMonth() + "/" + card.getExpYear());
-                }
-            }
-        }, timeOut);
-
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public boolean cipherInit() {
@@ -264,54 +236,4 @@ public class AuthenticateActivity extends AppCompatActivity {
         }
     }
 
-    public void onScanPress() {
-        Intent scanIntent = new Intent(this, CardIOActivity.class);
-
-        // customize these values to suit your needs.
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true);
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, true);
-        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false);
-        scanIntent.putExtra(CardIOActivity.EXTRA_HIDE_CARDIO_LOGO,true);
-
-        startActivityForResult(scanIntent, MY_SCAN_REQUEST_CODE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == MY_SCAN_REQUEST_CODE) {
-            String resultDisplayStr;
-            if (data != null && data.hasExtra(CardIOActivity.EXTRA_SCAN_RESULT)) {
-                CreditCard scanResult = data.getParcelableExtra(CardIOActivity.EXTRA_SCAN_RESULT);
-
-                resultDisplayStr = "Card Number: " + scanResult.getRedactedCardNumber() + "\n";
-                SimplifyEditText cardNumberView = (SimplifyEditText) findViewById(R.id.card_number);
-                cardNumberView.setText(scanResult.cardNumber);
-
-                // Do something with the raw number, e.g.:
-                // myService.setCardNumber( scanResult.cardNumber );
-
-                if (scanResult.isExpiryValid()) {
-                    SimplifyEditText expiryView = (SimplifyEditText) findViewById(R.id.card_expiry);
-                    expiryView.setText(scanResult.expiryMonth + "/" + scanResult.expiryYear);
-                    resultDisplayStr += "Expiration Date: " + scanResult.expiryMonth + "/" + scanResult.expiryYear + "\n";
-                }
-
-                if (scanResult.cvv != null) {
-                    // Never log or display a CVV
-                    SimplifyEditText cvvView = (SimplifyEditText) findViewById(R.id.card_cvv);
-                    cvvView.setText(scanResult.cvv);
-                    resultDisplayStr += "CVV has " + scanResult.cvv.length() + " digits.\n";
-                }
-
-                if (scanResult.postalCode != null) {
-                    resultDisplayStr += "Postal Code: " + scanResult.postalCode + "\n";
-                }
-            }
-            else {
-                resultDisplayStr = "Scan was canceled.";
-            }
-        }
-    }
 }

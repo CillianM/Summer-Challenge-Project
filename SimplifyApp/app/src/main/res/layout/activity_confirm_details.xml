@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout
+    android:id="@+id/cardform_layout"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.mastercard.simplifyapp.ConfirmDetailsActivity"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <com.mastercard.simplifyapp.widgets.SimplifyEditText
+            android:id="@+id/user_name"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:hint="@string/username"/>
+
+        <com.mastercard.simplifyapp.widgets.SimplifyEditText
+            android:id="@+id/user_email"
+            android:layout_below="@+id/user_name"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:hint="@string/email"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/user_email">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/card_number_layout"
+                >
+                <com.mastercard.simplifyapp.widgets.SimplifyEditText
+                    android:id="@+id/card_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:hint="@string/simplify_card_number"
+                    android:layout_weight=".70"/>
+
+                <com.github.clans.fab.FloatingActionButton
+                    android:id="@+id/scan_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/camera"
+                    fab:fab_colorNormal="@color/colorPrimary"
+                    fab:fab_colorPressed="@color/colorPrimary"
+                    fab:fab_size="mini"
+                    android:layout_weight=".05"
+                    />
+
+
+            </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/card_number_layout"
+                >
+                <com.mastercard.simplifyapp.widgets.SimplifyEditText
+                    android:id="@+id/card_expiry"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight=".50"
+                    android:hint="@string/simplify_expiration"/>
+
+                <com.mastercard.simplifyapp.widgets.SimplifyEditText
+                    android:id="@+id/card_cvv"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight=".50"
+                    android:hint="@string/cvv"/>
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/confirm_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/check"
+            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorPressed="@color/colorPrimary"
+            fab:fab_size="normal"
+            />
+    </RelativeLayout>

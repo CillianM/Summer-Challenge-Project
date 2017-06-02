@@ -24,23 +24,26 @@
         <RelativeLayout
             android:id="@+id/profileBox"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="150dp"
             android:background="@color/material_blue_grey_800"
             android:padding="8dp" >
 
-            <ImageView
+            <com.mastercard.simplifyapp.utility.RoundedImageView
                 android:id="@+id/avatar"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@mipmap/ic_launcher"
+                android:layout_centerInParent="true"
+                android:src="@drawable/stock_icon"
+                android:onClick="openSettings"
                 android:layout_marginTop="15dp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="42dp"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="15dp"
-                android:layout_toRightOf="@+id/avatar"
+                android:layout_centerInParent="true"
+                android:layout_below="@+id/avatar"
                 android:orientation="vertical" >
 
                 <TextView
@@ -51,16 +54,6 @@
                     android:textColor="#fff"
                     android:textSize="16sp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/desc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginTop="4dp"
-                    android:text="@string/navlist_blurb"
-                    android:textColor="#fff"
-                    android:textSize="12sp" />
             </LinearLayout>
 
 

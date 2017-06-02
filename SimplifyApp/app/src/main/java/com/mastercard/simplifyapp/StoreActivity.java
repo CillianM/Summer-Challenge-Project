@@ -42,10 +42,9 @@ public class StoreActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store);
 
-        mNavItems.add(new NavItem("Checkout", "Check Out Customers Items", R.drawable.basket));
-        mNavItems.add(new NavItem("Customers", "Search For Customer Information", R.drawable.customer));
-        mNavItems.add(new NavItem("Stock", "Stock Control", R.drawable.clipboard));
-        mNavItems.add(new NavItem("Settings", "Open Apps Settings", R.drawable.settings));
+        mNavItems.add(new NavItem("Checkout", "Check Out Customers Items", R.drawable.ic_shopping_basket_black_24dp));
+        mNavItems.add(new NavItem("Customers", "Search For Customer Information", R.drawable.ic_perm_identity_black_24dp));
+        mNavItems.add(new NavItem("Stock", "Stock Control", R.drawable.ic_store_black_24dp));
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -120,6 +119,8 @@ public class StoreActivity extends AppCompatActivity {
         mDrawerToggle.syncState();
     }
 
+
+
     private void selectItemFromDrawer(int position) {
         Fragment fragment = null; //initialize empty fragment
         count = 0;
@@ -149,4 +150,17 @@ public class StoreActivity extends AppCompatActivity {
         mDrawerLayout.closeDrawer(mDrawerPane);
     }
 
+    public void openSettings(View view) {
+        Fragment fragment = new SettingsFragment();
+
+        //Replace current fragment
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.mainContent, fragment,"FRAGMENT")
+                .commit();
+        setTitle("Settings");
+
+        // Close the drawer
+        mDrawerLayout.closeDrawer(mDrawerPane);
+    }
 }
