@@ -32,5 +32,6 @@ dependencies {
     compile 'com.github.clans:fab:1.6.4'
     compile 'com.github.pavlospt:roundedletterview:1.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.mattprecious.swirl:swirl:1.0.0'
     testCompile 'junit:junit:4.12'
 }

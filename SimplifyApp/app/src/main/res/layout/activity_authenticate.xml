@@ -10,78 +10,140 @@
     android:layout_height="match_parent"
     >
 
-    <RelativeLayout
-        android:id="@+id/fingerprint_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-
-    <ImageView
-        android:id="@+id/fingerprint_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:src="@drawable/ic_fp_40px"/>
-    <ImageView
-        android:id="@+id/fingerprint_icon_success"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="60dp"
-        android:paddingTop="60dp"
-        android:layout_centerInParent="true"
-        android:src="@drawable/ic_fingerprint_success"
-        android:visibility="gone"/>
-
-    <ImageView
-        android:id="@+id/fingerprint_icon_error"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="60dp"
-        android:paddingTop="60dp"
-        android:layout_centerInParent="true"
-        android:src="@drawable/ic_fingerprint_error"
-        android:visibility="gone"/>
-
-    <ProgressBar
-        android:id="@+id/fingerprint_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingStart="60dp"
-        android:paddingTop="60dp"
-        android:visibility="gone"
-        android:layout_centerInParent="true"
-        android:indeterminate="true"/>
-
-
-    <com.mastercard.simplifyapp.widgets.SimplifyTextView
-        android:id="@+id/fingerprint_message"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:layout_height="60dp"
-        android:text="@string/fingerprint_description"
-        android:layout_below="@+id/fingerprint_icon"
-         />
-    </RelativeLayout>
-
     <LinearLayout
         android:id="@+id/options_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/fingerprint_layout"
-        android:layout_toEndOf="@+id/fingerprint_layout"
         android:orientation="vertical"
         >
 
         <RelativeLayout
+            android:id="@+id/cover_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.5">
 
             <ImageView
+                android:id="@+id/authenticate_cover"
                 android:layout_width="175dp"
                 android:layout_height="175dp"
                 android:layout_centerInParent="true"
                 android:src="@drawable/security_icon"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/swirl_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:visibility="gone"
+            >
+
+            <com.mattprecious.swirl.SwirlView
+                android:id="@+id/swirl"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/check_mark_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/check_mark"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:srcCompat="@drawable/animated_check"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/gesture_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:visibility="gone">
+
+            <com.mastercard.simplifyapp.view.PasswordGestureView
+                android:id="@+id/gesture"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/password_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:visibility="gone">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                app:passwordToggleEnabled="true"
+                android:paddingEnd="40dp"
+                android:paddingStart="40dp">
+
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:cursorVisible="false"
+                    android:textSize="18dp"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:focusableInTouchMode="true"
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/camera_layout"
+            android:layout_weight="0.5"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <TextureView
+                android:id="@+id/camera_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <ImageButton
+                android:id="@+id/take_picture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_camera_white_48dp"
+                android:background="@color/transparent"
+                />
+
+            <ImageButton
+                android:id="@+id/close_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:background="@color/transparent"
+                android:src="@drawable/ic_clear_white_48dp" />
+
         </RelativeLayout>
 
 

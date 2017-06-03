@@ -28,7 +28,7 @@
             android:background="@color/material_blue_grey_800"
             android:padding="8dp" >
 
-            <com.mastercard.simplifyapp.utility.RoundedImageView
+            <com.mastercard.simplifyapp.view.RoundedImageView
                 android:id="@+id/avatar"
                 android:layout_width="50dp"
                 android:layout_height="50dp"

@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="swirl_ridgeColor">?android:attr/textColorSecondary</item>
+        <item name="swirl_errorColor">?android:attr/colorAccent</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

@@ -1,4 +1,4 @@
-package com.mastercard.simplifyapp.utility;
+package com.mastercard.simplifyapp.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
