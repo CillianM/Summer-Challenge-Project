@@ -21,7 +21,8 @@
             android:id="@+id/cover_layout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5">
+            android:layout_weight="0.5"
+            android:visibility="visible">
 
             <ImageView
                 android:id="@+id/authenticate_cover"
@@ -114,16 +115,15 @@
 
         <RelativeLayout
             android:id="@+id/camera_layout"
-            android:layout_weight="0.5"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
             android:visibility="gone">
 
             <TextureView
                 android:id="@+id/camera_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                />
+                android:layout_height="wrap_content" />
 
             <ImageButton
                 android:id="@+id/take_picture"
@@ -131,9 +131,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/ic_camera_white_48dp"
                 android:background="@color/transparent"
-                />
+                android:src="@drawable/ic_camera_white_48dp" />
 
             <ImageButton
                 android:id="@+id/close_btn"
