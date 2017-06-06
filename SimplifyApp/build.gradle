@@ -2,7 +2,7 @@
 
 buildscript {
     //Mastercard development
-    /*
+
     repositories {
         maven {
             url 'http://artifactory.mastercard.com:16364/artifactory/central'
@@ -11,11 +11,12 @@ buildscript {
             url 'http://artifactory.mastercard.com:16364/artifactory/grails-core-cache'
         }
 
-    }*/
+    }
     //Home development
+    /*
     repositories {
         jcenter()
-    }
+    }*/
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.1'
 
@@ -26,7 +27,7 @@ buildscript {
 
 allprojects {
     //Mastercard development
-    /*
+
     repositories {
         maven {
             url 'http://artifactory.mastercard.com:16364/artifactory/central'
@@ -34,11 +35,12 @@ allprojects {
         maven {
             url 'http://artifactory.mastercard.com:16364/artifactory/releases'
         }
-    }*/
+    }
     //Home development
+    /*
     repositories {
         jcenter()
-    }
+    }*/
 }
 
 task clean(type: Delete) {

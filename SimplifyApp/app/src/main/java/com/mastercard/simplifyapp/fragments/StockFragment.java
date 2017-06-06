@@ -3,6 +3,9 @@ package com.mastercard.simplifyapp.fragments;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.mastercard.simplifyapp.ItemViewActivity;
 import com.mastercard.simplifyapp.R;
 import com.mastercard.simplifyapp.StoreItem;
 import com.mastercard.simplifyapp.adapters.StoreListAdapter;
@@ -76,6 +80,23 @@ public class StockFragment extends Fragment{
         itemsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), ItemViewActivity.class);
+                intent.putExtra("name", storeItems.get(position).getName());
+                intent.putExtra("description", storeItems.get(position).getDescription());
+                intent.putExtra("price", storeItems.get(position).getPrice());
+                intent.putExtra("quantity", storeItems.get(position).getQuantity());
+                intent.putExtra("image", R.drawable.stock_icon);
+                // Get the transition name from the string
+                String transitionName = "reveal";
+
+                ActivityOptionsCompat options =
+
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                                view,   // Starting view
+                                transitionName    // The String
+                        );
+
+                ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
             }
 
@@ -88,6 +109,7 @@ public class StockFragment extends Fragment{
                 return true;
             }
         });
+        itemsList.setTransitionName("reveal");
 
         populateStoreList();
 

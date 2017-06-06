@@ -13,8 +13,9 @@
 
 
     <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:id="@+id/mastercard_logo"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:src="@drawable/mastercard_logo"
         android:layout_gravity="center"
         android:foregroundGravity="top"

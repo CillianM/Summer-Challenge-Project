@@ -38,6 +38,19 @@
                 android:text="@string/sale"
                 android:textSize="20dp"/>
 
+
+
+            <ProgressBar
+                android:id="@+id/checkoutCircle"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:max="100"
+                android:progress="25"
+                android:progressDrawable="@drawable/circular"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
+
             <com.mastercard.simplifyapp.widgets.SimplifyTextView
                 android:id="@+id/total"
                 android:gravity="center"

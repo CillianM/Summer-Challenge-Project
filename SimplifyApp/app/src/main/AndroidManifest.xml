@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera2.full" />
 
@@ -37,14 +38,11 @@
         <activity
             android:name=".AuthenticateActivity"
             android:label="Authenticate User"
-            android:theme="@style/AppTheme">
-
-        </activity>
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".ConfirmDetailsActivity"
-            android:label="Confirm User Details">
-
-        </activity>
+            android:label="Confirm User Details"></activity>
+        <activity android:name=".ItemViewActivity"></activity>
     </application>
 
 </manifest>

@@ -1,6 +1,8 @@
 package com.mastercard.simplifyapp;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
@@ -41,6 +43,8 @@ import android.view.KeyEvent;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -193,7 +197,7 @@ public class AuthenticateActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 closeCamera();
-                findViewById(R.id.camera_layout).setVisibility(View.GONE);
+                resetView();
             }
         });
 
@@ -227,6 +231,7 @@ public class AuthenticateActivity extends AppCompatActivity {
             findViewById(R.id.gesture_layout).startAnimation(fadeGesture);
         findViewById(R.id.gesture_layout).setVisibility(View.GONE);
         findViewById(R.id.check_mark_layout).setVisibility(View.GONE);
+        findViewById(R.id.camera_layout).setVisibility(View.GONE);
         findViewById(R.id.cover_layout).setVisibility(View.VISIBLE);
     }
 
@@ -242,7 +247,48 @@ public class AuthenticateActivity extends AppCompatActivity {
         }
         else if(position == 1 && previousAuth != position)
         {
+            resetView();
+            findViewById(R.id.cover_layout).setVisibility(View.GONE);
+            findViewById(R.id.camera_layout).setVisibility(View.VISIBLE);
+            findViewById(R.id.camera_layout).addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    v.removeOnLayoutChangeListener(this);
 
+                    float finalRadius = (float) Math.hypot(v.getWidth(), v.getHeight());
+                    int cx1 = (findViewById(R.id.camera_layout).getLeft() + findViewById(R.id.camera_layout).getRight()) / 2;
+                    int cy1 = (findViewById(R.id.camera_layout).getTop() + findViewById(R.id.camera_layout).getBottom()) / 2;
+                    Animator anim = ViewAnimationUtils.createCircularReveal(v, cx1, cy1, 0, finalRadius);
+                    anim.setDuration(900);
+                    anim.setInterpolator(new AccelerateDecelerateInterpolator());
+
+                    anim.addListener(new Animator.AnimatorListener() {
+                        @Override
+                        public void onAnimationStart(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationCancel(Animator animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animator animation) {
+
+                        }
+                    });
+                    anim.start();
+
+
+                }
+            });
             if(!alreadyInstantiated) {
                 textureListener = new TextureView.SurfaceTextureListener() {
                     @Override

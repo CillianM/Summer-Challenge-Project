@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.mastercard.simplifyapp.AuthenticateActivity;
@@ -34,6 +35,7 @@ public class CheckoutFragment extends Fragment {
     ArrayList<StoreItem> storeItems;
     SwitchCompat willRefund;
     SimplifyTextView refundStatusText;
+    ProgressBar checkoutCircle;
 
 
 
@@ -114,6 +116,8 @@ public class CheckoutFragment extends Fragment {
             }
         });
 
+        checkoutCircle = (ProgressBar) getView().findViewById(R.id.checkoutCircle);
+
 
 
         populateStoreList();
@@ -142,6 +146,8 @@ public class CheckoutFragment extends Fragment {
         {
             total += item.getPrice();
         }
+        checkoutCircle.setProgress(total % 100);
+
         String currency = getResources().getString(R.string.euro);
         String price = currency + total;
         priceView.setText(price);

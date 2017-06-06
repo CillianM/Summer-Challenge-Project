@@ -41,7 +41,7 @@ public class PasswordGestureView extends View {
     Map<String, RectF> mRectFButtons_select = new HashMap<String, RectF>();
     List<String> mPwd = new ArrayList<String>();
 
-    int colorNomalBg = Color.rgb(86, 171, 228);
+    int colorNomalBg = Color.rgb(255, 102, 0);
 
     public void setColorNomalBg(int color) {
         this.colorNomalBg = color;
@@ -451,9 +451,6 @@ public class PasswordGestureView extends View {
             pathPointer.reset();
             pathPointer.moveTo(x1, y1);
             pathPointer.lineTo(x2, y2);
-            canvas.drawTextOnPath("☞", pathPointer, getFontHeight(mPaintOrientation, "☞") * 3 / 2,
-                    getFontHeight(mPaintOrientation, "☞") / 2,
-                    mPaintOrientation);
         }
     }
 

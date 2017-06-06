@@ -1,10 +1,15 @@
 package com.mastercard.simplifyapp;
 
+import android.os.Parcelable;
+
+import java.util.ArrayList;
+import java.util.stream.Stream;
+
 /**
  * Created by Cillian on 10/05/2017.
  */
 
-public class StoreItem {
+public class StoreItem{
     private String name;
     private String description;
     private int price;
@@ -63,4 +68,5 @@ public class StoreItem {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
 }
