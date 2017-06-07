@@ -27,6 +27,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
+            fab:menu_labels_showShadow="true"
             fab:menu_colorNormal="@color/colorPrimary"
             fab:menu_colorPressed="@color/colorPrimaryDark"
             fab:menu_colorRipple="#99FFFFFF"

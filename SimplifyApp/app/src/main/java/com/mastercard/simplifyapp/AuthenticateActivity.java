@@ -233,6 +233,9 @@ public class AuthenticateActivity extends AppCompatActivity {
         findViewById(R.id.check_mark_layout).setVisibility(View.GONE);
         findViewById(R.id.camera_layout).setVisibility(View.GONE);
         findViewById(R.id.cover_layout).setVisibility(View.VISIBLE);
+        closeCamera();
+        if(mBackgroundThread != null)
+            stopBackgroundThread();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -255,37 +258,13 @@ public class AuthenticateActivity extends AppCompatActivity {
                 @Override
                 public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                     v.removeOnLayoutChangeListener(this);
-
                     float finalRadius = (float) Math.hypot(v.getWidth(), v.getHeight());
                     int cx1 = (findViewById(R.id.camera_layout).getLeft() + findViewById(R.id.camera_layout).getRight()) / 2;
                     int cy1 = (findViewById(R.id.camera_layout).getTop() + findViewById(R.id.camera_layout).getBottom()) / 2;
                     Animator anim = ViewAnimationUtils.createCircularReveal(v, cx1, cy1, 0, finalRadius);
                     anim.setDuration(900);
                     anim.setInterpolator(new AccelerateDecelerateInterpolator());
-
-                    anim.addListener(new Animator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animator animation) {
-
-                        }
-                    });
                     anim.start();
-
 
                 }
             });
@@ -315,6 +294,7 @@ public class AuthenticateActivity extends AppCompatActivity {
             }
             else
             {
+                startBackgroundThread();
                 openCamera();
             }
 
@@ -688,23 +668,26 @@ public class AuthenticateActivity extends AppCompatActivity {
             }
         }
     }
-    /*@Override
+    @Override
     protected void onResume() {
         super.onResume();
         Log.e(TAG, "onResume");
         startBackgroundThread();
-        if (textureView.isAvailable()) {
-            openCamera();
-        } else {
-            textureView.setSurfaceTextureListener(textureListener);
+        if(textureView != null) {
+            if (textureView.isAvailable()) {
+                openCamera();
+            } else {
+                textureView.setSurfaceTextureListener(textureListener);
+            }
         }
     }
     @Override
     protected void onPause() {
         Log.e(TAG, "onPause");
-        //closeCamera();
-        stopBackgroundThread();
+        closeCamera();
+        if(mBackgroundThread != null)
+            stopBackgroundThread();
         super.onPause();
-    }*/
+    }
 
 }

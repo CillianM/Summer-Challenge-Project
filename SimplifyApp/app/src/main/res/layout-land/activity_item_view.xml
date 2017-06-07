@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/layout"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         >
 
         <RelativeLayout
@@ -25,7 +25,7 @@
             <com.mastercard.simplifyapp.view.RoundedImageView
                 android:id="@+id/item_image"
                 android:layout_width="200dp"
-                android:layout_height="match_parent"
+                android:layout_height="200dp"
                 android:layout_centerInParent="true"
                 android:src="@drawable/stock_icon" />
 
