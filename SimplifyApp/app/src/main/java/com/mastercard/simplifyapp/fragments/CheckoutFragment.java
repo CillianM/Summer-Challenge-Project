@@ -156,10 +156,9 @@ public class CheckoutFragment extends Fragment {
     private void populateStoreList() {
 
         storeItems = new ArrayList<>();
-        storeItems.add(new StoreItem("Item One","This is Item one", 10));
-        storeItems.add(new StoreItem("Item Two","This is Item two", 5));
-        storeItems.add(new StoreItem("Item Three","This is Item three", 17));
-        storeItems.add(new StoreItem("Item Four","This is Item four", 20));
+        storeItems.add(new StoreItem("Coffee","This is Item one", 2));
+        storeItems.add(new StoreItem("Muffin","This is Item four", 1));
+        storeItems.add(new StoreItem("Sandwich","This is Item eight", 4));
 
         StoreListAdapter adapter = new StoreListAdapter(getActivity(), storeItems);
 

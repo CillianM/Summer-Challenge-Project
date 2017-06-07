@@ -45,17 +45,6 @@
                 />
 
             <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/edit_item"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/pencil"
-                fab:fab_colorNormal="@color/colorPrimary"
-                fab:fab_colorPressed="@color/colorPrimary"
-                fab:fab_size="mini"
-                fab:fab_label="Edit Items"
-                />
-
-            <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/count_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

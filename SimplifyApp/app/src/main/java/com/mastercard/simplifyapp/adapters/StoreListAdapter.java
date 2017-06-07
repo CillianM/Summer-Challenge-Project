@@ -1,6 +1,7 @@
 package com.mastercard.simplifyapp.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.mastercard.simplifyapp.R;
 import com.mastercard.simplifyapp.StoreItem;
+import com.mastercard.simplifyapp.utility.ColorGenerator;
+import com.mastercard.simplifyapp.utility.TextDrawable;
 
 import java.util.ArrayList;
 
@@ -56,14 +59,15 @@ public class StoreListAdapter extends BaseAdapter {
         }
 
         TextView titleView = (TextView) view.findViewById(R.id.title);
-        TextView descriptionView = (TextView) view.findViewById(R.id.description);
         TextView priceView = (TextView) view.findViewById(R.id.price);
-        ImageView draweeView = (ImageView) view.findViewById(R.id.icon);
-
-
+        ImageView iconView = (ImageView) view.findViewById(R.id.icon);
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+        int color = generator.getRandomColor();
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRect(mNavItems.get(position).getName().toUpperCase().substring(0,1), Color.LTGRAY);
+        iconView.setImageDrawable(drawable);
         titleView.setText( mNavItems.get(position).getName() );
-        descriptionView.setText( mNavItems.get(position).getDescription() );
-        priceView.setText( mNavItems.get(position).getPriceString() );
+        priceView.setText("€" + mNavItems.get(position).getPriceString() );
 
         return view;
     }

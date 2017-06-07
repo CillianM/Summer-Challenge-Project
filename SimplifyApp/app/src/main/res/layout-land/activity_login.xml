@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_login"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/shelves_blur"
+    >
+
+    <ImageView
+        android:id="@+id/iv_simplify"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentTop="true"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/simplify_logo" />
+
+    <LinearLayout
+        android:id="@+id/ll_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.mastercard.simplifyapp.widgets.SimplifyEditText
+            android:id="@+id/et_username"
+            style="@style/WhiteEdittextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/username" />
+
+        <View
+            android:id="@+id/view_username"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="60dp"
+            android:layout_marginTop="3dp"
+            android:background="@color/white" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+            <com.mastercard.simplifyapp.widgets.SimplifyEditText
+                android:id="@+id/et_password"
+                style="@style/WhiteEdittextStyle"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_toLeftOf="@+id/btn_login"
+                android:layout_alignParentLeft="true"/>
+
+            <View
+                android:id="@+id/view_password"
+                android:layout_width="100dp"
+                android:layout_height="1dp"
+                android:layout_below="@+id/et_password"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/btn_login"
+                android:background="@color/white"/>
+
+            <com.mastercard.simplifyapp.widgets.SimplifyButton
+                android:id="@+id/btn_login"
+                style="@style/OrangeButtonStyle"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/view_password"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="10dp"
+
+                android:text="@string/login" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

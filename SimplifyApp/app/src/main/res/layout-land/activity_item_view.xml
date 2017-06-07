@@ -22,7 +22,7 @@
             android:background="@color/material_blue_grey_800"
             android:visibility="visible">
 
-            <com.mastercard.simplifyapp.view.RoundedImageView
+            <ImageView
                 android:id="@+id/item_image"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
