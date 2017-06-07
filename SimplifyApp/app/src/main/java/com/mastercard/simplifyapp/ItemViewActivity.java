@@ -107,7 +107,7 @@ public class ItemViewActivity extends AppCompatActivity {
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        findViewById(R.id.topView).setBackgroundResource(R.color.transparent);
+                        //findViewById(R.id.topView).setBackgroundResource(R.color.transparent);
                     }
 
                     @Override
