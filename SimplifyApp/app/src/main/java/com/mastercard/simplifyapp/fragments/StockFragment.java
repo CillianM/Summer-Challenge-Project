@@ -59,14 +59,6 @@ public class StockFragment extends Fragment{
             }
 
         });
-        edit = (FloatingActionButton) getView().findViewById(R.id.edit_item);
-        edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addItem();
-            }
-
-        });
         count = (FloatingActionButton) getView().findViewById(R.id.count_item);
         count.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,14 +111,14 @@ public class StockFragment extends Fragment{
     private void populateStoreList() {
 
         storeItems = new ArrayList<>();
-        storeItems.add(new StoreItem("Item One","This is Item one", 10));
-        storeItems.add(new StoreItem("Item Two","This is Item two", 5));
-        storeItems.add(new StoreItem("Item Three","This is Item three", 17));
-        storeItems.add(new StoreItem("Item Four","This is Item four", 20));
-        storeItems.add(new StoreItem("Item Five","This is Item five", 10));
-        storeItems.add(new StoreItem("Item Six","This is Item six", 5));
-        storeItems.add(new StoreItem("Item Seven","This is Item seven", 17));
-        storeItems.add(new StoreItem("Item Eight","This is Item eight", 20));
+        storeItems.add(new StoreItem("Coffee","This is Item one", 2));
+        storeItems.add(new StoreItem("Tea","This is Item two", 2));
+        storeItems.add(new StoreItem("Scone","This is Item three", 1));
+        storeItems.add(new StoreItem("Muffin","This is Item four", 1));
+        storeItems.add(new StoreItem("Cake Slice","This is Item five", 3));
+        storeItems.add(new StoreItem("Orange Juice","This is Item six", 2));
+        storeItems.add(new StoreItem("Bottled Water","This is Item seven", 2));
+        storeItems.add(new StoreItem("Sandwich","This is Item eight", 4));
 
         StoreListAdapter adapter = new StoreListAdapter(getActivity(), storeItems);
 

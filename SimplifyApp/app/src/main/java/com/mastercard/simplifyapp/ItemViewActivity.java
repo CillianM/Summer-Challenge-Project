@@ -18,6 +18,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.mastercard.simplifyapp.utility.ColorGenerator;
+import com.mastercard.simplifyapp.utility.TextDrawable;
 import com.mastercard.simplifyapp.view.RoundedImageView;
 
 public class ItemViewActivity extends AppCompatActivity {
@@ -34,6 +36,13 @@ public class ItemViewActivity extends AppCompatActivity {
         int price = getIntent().getIntExtra("price",0);
         int quantity = getIntent().getIntExtra("quantity",0);
         int image = getIntent().getIntExtra("image",0);
+
+        ImageView imageView = (ImageView) findViewById(R.id.item_image);
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+        int color = generator.getRandomColor();
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(name.toUpperCase().substring(0,1), Color.LTGRAY);
+        imageView.setImageDrawable(drawable);
 
         setTitle(name);
 
@@ -62,8 +71,7 @@ public class ItemViewActivity extends AppCompatActivity {
         TextView priceView = (TextView)findViewById(R.id.price);
         priceView.setText(price + "");
 
-        RoundedImageView imageView = (RoundedImageView)findViewById(R.id.item_image);
-        imageView.setImageResource(image);
+
 
         android.support.design.widget.FloatingActionButton editFab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.edit_fab);
         editFab.setOnClickListener(new View.OnClickListener() {
