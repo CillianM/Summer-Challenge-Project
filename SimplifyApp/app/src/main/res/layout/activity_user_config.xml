@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.mastercard.simplifyapp.UserConfigActivity">
+
+
+    <com.airbnb.lottie.LottieAnimationView
+
+        android:id="@+id/animation_view"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:lottie_fileName="outline_user.json"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/question"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:text="What Kind Of User Are You?"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:visibility="invisible"
+        android:layout_below="@+id/animation_view"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:id="@+id/store_icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/store_icon"
+        android:onClick="merchantView"
+        android:layout_below="@+id/question"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/store_icon_text"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:text="A Merchant?"
+        android:gravity="center"
+        android:layout_below="@+id/store_icon"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/animation_view"
+        android:layout_alignEnd="@+id/store_icon" />
+
+    <ImageView
+        android:id="@+id/customer_icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/cart_image"
+        android:onClick="customerView"
+        android:layout_below="@+id/question"
+        android:layout_toEndOf="@+id/animation_view" />
+
+    <TextView
+        android:id="@+id/customer_icon_text"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:text="A Customer?"
+        android:gravity="center"
+        android:layout_alignBaseline="@+id/store_icon_text"
+        android:layout_alignBottom="@+id/store_icon_text"
+        android:layout_alignStart="@+id/customer_icon" />
+
+
+
+</RelativeLayout>
