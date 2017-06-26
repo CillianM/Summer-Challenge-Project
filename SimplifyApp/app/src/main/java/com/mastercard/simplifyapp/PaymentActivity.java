@@ -2,6 +2,8 @@ package com.mastercard.simplifyapp;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -13,22 +15,48 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.braintreepayments.cardform.view.CardForm;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.mastercard.mpqr.pushpayment.model.AdditionalData;
 import com.mastercard.mpqr.pushpayment.model.PushPaymentData;
+import com.mastercard.simplifyapp.interfaces.OnTaskCompleted;
 import com.mastercard.simplifyapp.objects.Transaction;
+import com.simplify.android.sdk.Card;
+import com.simplify.android.sdk.CardToken;
+import com.simplify.android.sdk.Simplify;
 
-public class PaymentActivity extends AppCompatActivity {
+import static com.mastercard.simplifyapp.R.id.card_number;
+import static com.mastercard.simplifyapp.R.id.total;
 
+public class PaymentActivity extends AppCompatActivity implements OnTaskCompleted {
+
+    private static final int WIDTH = 200;
     Bitmap qrCode;
+    BitmapCreator creator;
+    boolean showingBitmap = false;
+    boolean completed = false;
+    String qrContent;
+    CardForm cardForm;
+    Simplify simplify;
+    CardToken token;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
+        simplify = new Simplify();
+        simplify.setApiKey("sbpb_NGY0ZTFmODctZmZjNi00YmFiLThjZjktZTBiMGNhNmVhMjI2");
+
 
         Intent intent = getIntent();
         Transaction currentTransaction = (Transaction)intent.getSerializableExtra("transaction");
 
-        CardForm cardForm = (CardForm) findViewById(R.id.card_form);
+        cardForm = (CardForm) findViewById(R.id.card_form);
         cardForm.cardRequired(true)
                 .expirationRequired(true)
                 .cvvRequired(true)
@@ -42,28 +70,33 @@ public class PaymentActivity extends AppCompatActivity {
         additionalData.setTerminalId("45784312");
         additionalData.setReferenceId("Test Ref");
         additionalData.setStoreId("A6008");
+        additionalData.setPurpose(currentTransaction.getItems());
         additionalData.setLoyaltyNumber("000");
 
         PushPaymentData data = new PushPaymentData();
+        data.setPayloadFormatIndicator("01");
+        data.setPointOfInitiationMethod("12");
+        data.setMerchantIdentifierMastercard04("460067893452143");
         data.setPayloadFormatIndicator("01");
         data.setCountryCode("IE");
         data.setMerchantCategoryCode("5204");
         data.setMerchantCity("Dublin");
         data.setMerchantName("Test Merchant");
         data.setTransactionAmount(19.99);
-        data.setTransactionCurrencyCode("eur");
+        data.setTransactionCurrencyCode("978");
         data.setAdditionalData(additionalData);
         try {
             //validate the payload before generate the qrcode string
             data.validate();
-            String qrContent = data.generatePushPaymentString();
-            //qrCode = encodeAsBitmap(qrContent);
+            qrContent = data.generatePushPaymentString();
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(),"Error Occured",Toast.LENGTH_SHORT).show();
         }
     }
 
     public void qrView(View view) {
+        creator = new BitmapCreator(qrContent, this);
+        creator.execute();
         final RelativeLayout root = (RelativeLayout) findViewById(R.id.root_layout);
         final ImageView imageView = (ImageView) findViewById(R.id.qr_image);
         DisplayMetrics dm = new DisplayMetrics();
@@ -90,11 +123,10 @@ public class PaymentActivity extends AppCompatActivity {
             }
 
             public void onAnimationEnd(Animation animation) {
+                showingBitmap = true;
                 findViewById(R.id.card_image).setVisibility(View.GONE);
                 findViewById(R.id.qr_image).setVisibility(View.GONE);
                 findViewById(R.id.qr_code_layout).setVisibility(View.VISIBLE);
-                ImageView qrCodeView = (ImageView) findViewById(R.id.qr_code);
-                qrCodeView.setImageBitmap(qrCode);
             }
         });
         imageView.startAnimation(anim);
@@ -102,6 +134,16 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
     public void cardView(View view) {
+        final FloatingActionButton confirm = (FloatingActionButton) findViewById(R.id.confirm_transaction);
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                verifyTransaction();
+            }
+
+
+        });
+
         final RelativeLayout root = (RelativeLayout) findViewById(R.id.root_layout);
         final ImageView imageView = (ImageView) findViewById(R.id.card_image);
         DisplayMetrics dm = new DisplayMetrics();
@@ -131,35 +173,114 @@ public class PaymentActivity extends AppCompatActivity {
                 findViewById(R.id.card_image).setVisibility(View.GONE);
                 findViewById(R.id.qr_image).setVisibility(View.GONE);
                 findViewById(R.id.card_form).setVisibility(View.VISIBLE);
+                confirm.setVisibility(View.VISIBLE);
             }
         });
         imageView.startAnimation(anim);
     }
 
-    /*Bitmap encodeAsBitmap(String str) throws WriterException {
-    const int black = 0xFF000000;
-    const int white = 0xFFFFFFFF;
-        BitMatrix result;
-        Bitmap bitmap=null;
-        try {
-            result = new MultiFormatWriter().encode(str,
-                    BarcodeFormat.QR_CODE, WIDTH, WIDTH, null);
+    void verifyTransaction() {
 
-            int w = result.getWidth();
-            int h = result.getHeight();
-            int[] pixels = new int[w * h];
-            for (int y = 0; y < h; y++) {
-                int offset = y * w;
-                for (int x = 0; x < w; x++) {
-                    pixels[offset + x] = result.get(x, y) ? black : white;
-                }
+        Card card = new Card();
+        card.setCvc(cardForm.getCvv());
+        card.setNumber(cardForm.getCardNumber());
+        card.setExpMonth(cardForm.getExpirationMonth());
+        card.setExpYear(cardForm.getExpirationYear());
+        card.setAddressZip(cardForm.getCountryCode());
+
+        // tokenize the card
+        simplify.createCardToken(card, new CardToken.Callback() {
+            @Override
+            public void onSuccess(CardToken cardToken) {
+               token = cardToken;
             }
-            bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-            bitmap.setPixels(pixels, 0, 500, 0, 0, w, h);
-        } catch (Exception iae) {
-            iae.printStackTrace();
-            return null;
+            @Override
+            public void onError(Throwable throwable) {
+                // ...
+            }
+        });
+    }
+
+    @Override
+    public void onTaskCompleted() {
+        qrCode = creator.getBitmap();
+        ImageView qrCodeView = (ImageView) findViewById(R.id.qr_code);
+        qrCodeView.setImageBitmap(qrCode);
+        findViewById(R.id.qr_code_progress).setVisibility(View.GONE);
+        findViewById(R.id.qr_code).setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onTaskInProgress(String info) {
+
+    }
+
+    @Override
+    public void onErrorOccuring() {
+
+    }
+
+
+    class BitmapCreator extends AsyncTask<String, Void, String> {
+
+        String content;
+        OnTaskCompleted listener;
+        Bitmap bmp;
+
+        BitmapCreator(String content, OnTaskCompleted listener) {
+            this.content = content;
+            this.listener = listener;
+            this.bmp = null;
         }
-        return bitmap;
-    }*/
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                bmp = constructBitmap(content);
+            } catch (WriterException e) {
+                e.printStackTrace();
+                bmp = null;
+            }
+
+            return  "done";
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            listener.onTaskCompleted();
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values)
+        {
+
+        }
+
+        public Bitmap getBitmap(){return bmp;}
+
+        Bitmap constructBitmap(String str) throws WriterException {
+            Bitmap bmp = null;
+
+            QRCodeWriter writer = new QRCodeWriter();
+            try {
+                BitMatrix bitMatrix = writer.encode(str, BarcodeFormat.QR_CODE, 512, 512);
+                int width = bitMatrix.getWidth();
+                int height = bitMatrix.getHeight();
+                bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+                for (int x = 0; x < width; x++) {
+                    for (int y = 0; y < height; y++) {
+                        bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+                    }
+                }
+
+            } catch (WriterException e) {
+                e.printStackTrace();
+            }
+            return bmp;
+        }
+
+    }
 }

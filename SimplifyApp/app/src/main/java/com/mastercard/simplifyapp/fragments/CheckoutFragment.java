@@ -111,7 +111,7 @@ public class CheckoutFragment extends Fragment {
 
     private void commitTransaction() {
         Intent i = new Intent(this.getActivity(), PaymentActivity.class);
-        i.putExtra("transaction", new Transaction());
+        i.putExtra("transaction", new Transaction("Sean","Test Merchant",2.99,"1,2,3,4,5"));
         startActivity(i);
     }
 

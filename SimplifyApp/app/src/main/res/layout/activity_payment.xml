@@ -40,7 +40,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:src="@drawable/qr"/>
+            android:src="@drawable/qr"
+            android:visibility="gone"/>
+
+        <ProgressBar
+            android:id="@+id/qr_code_progress"
+            android:indeterminate="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"/>
 
         </RelativeLayout>
 
@@ -49,5 +57,21 @@
         android:id="@+id/card_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:visibility="gone"
+        android:id="@+id/confirm_transaction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/check"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        app:fab_colorNormal="@color/colorPrimary"
+        app:fab_colorPressed="@color/colorPrimary"
+        />
 
 </RelativeLayout>
