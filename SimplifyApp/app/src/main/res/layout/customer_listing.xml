@@ -6,15 +6,12 @@
     android:paddingTop="10dp"
     android:paddingBottom="10dp">
 
-    <com.github.pavlospt.roundedletterview.RoundedLetterView
+    <ImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/letter_icon"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:layout_marginStart="15dp"
-        app:rlv_backgroundColorValue="@color/colorPrimary"
-        app:rlv_titleColor="@android:color/white"
-        app:rlv_titleSize="35dp" />
+        android:layout_marginStart="15dp"/>
 
 
 

@@ -1,15 +1,18 @@
 package com.mastercard.simplifyapp.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mastercard.simplifyapp.objects.Customer;
 import com.mastercard.simplifyapp.R;
 import com.github.pavlospt.roundedletterview.RoundedLetterView;
+import com.mastercard.simplifyapp.utility.TextDrawable;
 
 import java.util.ArrayList;
 
@@ -55,11 +58,11 @@ public class CustomerListAdapter extends BaseAdapter {
         }
 
         TextView titleView = (TextView) view.findViewById(R.id.customer_name);
-        RoundedLetterView letterView = (RoundedLetterView) view.findViewById(R.id.letter_icon);
-
-
+        ImageView letterView = (ImageView) view.findViewById(R.id.letter_icon);
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRect(mNavItems.get(position).getName().toUpperCase().substring(0,1), Color.LTGRAY);
+        letterView.setImageDrawable(drawable);
         titleView.setText( mNavItems.get(position).getName() );
-        letterView.setTitleText(mNavItems.get(position).getName().substring(0,1).toUpperCase());
 
 
         return view;

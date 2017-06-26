@@ -49,8 +49,13 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".UserRegistrationActivity"
-            android:label="User Registration"></activity>
-        <activity android:name=".PaymentActivity"></activity>
+            android:label="User Registration" />
+        <activity
+            android:name=".PaymentActivity"
+            android:label="Confirm Payment Details"></activity>
+        <activity android:name=".TransactionViewActivity">
+
+        </activity>
     </application>
 
 </manifest>

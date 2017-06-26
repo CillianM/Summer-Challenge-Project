@@ -19,6 +19,7 @@ import com.mastercard.simplifyapp.fragments.CheckoutFragment;
 import com.mastercard.simplifyapp.fragments.CustomerFragment;
 import com.mastercard.simplifyapp.fragments.SettingsFragment;
 import com.mastercard.simplifyapp.fragments.StockFragment;
+import com.mastercard.simplifyapp.fragments.TransactionsFragment;
 import com.mastercard.simplifyapp.objects.NavItem;
 
 import java.util.ArrayList;
@@ -41,8 +42,10 @@ public class StoreActivity extends AppCompatActivity {
         setContentView(R.layout.activity_store);
 
         mNavItems.add(new NavItem("Checkout", "Check Out Customers Items", R.drawable.ic_shopping_basket_black_24dp));
-        mNavItems.add(new NavItem("Customers", "Search For Customer Information", R.drawable.ic_perm_identity_black_24dp));
+        mNavItems.add(new NavItem("Transactions", "View Transactions", R.drawable.ic_receipt_black_24dp));
         mNavItems.add(new NavItem("Stock", "Stock Control", R.drawable.ic_store_black_24dp));
+        mNavItems.add(new NavItem("Customers", "Search For Customer Information", R.drawable.ic_perm_identity_black_24dp));
+
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -126,13 +129,13 @@ public class StoreActivity extends AppCompatActivity {
             fragment = new CheckoutFragment();
         }
         else if(position == 1) {
-            fragment = new CustomerFragment();
+            fragment = new TransactionsFragment();
         }
         else if(position == 2) {
             fragment = new StockFragment();
         }
         else if(position == 3) {
-            fragment = new SettingsFragment();
+            fragment = new CustomerFragment();
         }
 
         //Replace current fragment

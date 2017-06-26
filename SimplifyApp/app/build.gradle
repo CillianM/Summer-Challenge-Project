@@ -24,6 +24,10 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //required dependencies
+    //compile 'com.journeyapps:zxing-android-embedded:3.4.0' //required dependencies
+    //compile (name: 'qr-scan-sdk-release-1.0.0', ext: 'aar')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'io.card:android-sdk:5.5.1'
@@ -35,9 +39,6 @@ dependencies {
     compile 'com.mattprecious.swirl:swirl:1.0.0'
     compile 'com.airbnb.android:lottie:2.0.0'
     compile 'com.braintreepayments:card-form:3.0.6'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'org.apache.commons:commons-lang3:3.5' //required dependencies
-    compile 'com.journeyapps:zxing-android-embedded:3.4.0' //required dependencies
-    compile (name: 'qr-scan-sdk-release-1.0.0', ext: 'aar')
+    compile 'org.apache.commons:commons-lang3:3.5'
     testCompile 'junit:junit:4.12'
 }

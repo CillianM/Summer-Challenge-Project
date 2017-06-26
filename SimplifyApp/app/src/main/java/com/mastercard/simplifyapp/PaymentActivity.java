@@ -33,10 +33,10 @@ public class PaymentActivity extends AppCompatActivity {
                 .expirationRequired(true)
                 .cvvRequired(true)
                 .postalCodeRequired(true)
-                .mobileNumberRequired(true)
-                .mobileNumberExplanation("SMS is required on this number")
+                .mobileNumberRequired(false)
                 .actionLabel("Purchase")
                 .setup(this);
+        cardForm.setVisibility(View.GONE);
 
         AdditionalData additionalData = new AdditionalData();
         additionalData.setTerminalId("45784312");
@@ -51,13 +51,13 @@ public class PaymentActivity extends AppCompatActivity {
         data.setMerchantCity("Dublin");
         data.setMerchantName("Test Merchant");
         data.setTransactionAmount(19.99);
-        data.setTransactionCurrencyCode("EUR");
+        data.setTransactionCurrencyCode("eur");
         data.setAdditionalData(additionalData);
         try {
             //validate the payload before generate the qrcode string
             data.validate();
             String qrContent = data.generatePushPaymentString();
-            qrCode = encodeAsBitmap(qrContent);
+            //qrCode = encodeAsBitmap(qrContent);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(),"Error Occured",Toast.LENGTH_SHORT).show();
         }
@@ -136,7 +136,7 @@ public class PaymentActivity extends AppCompatActivity {
         imageView.startAnimation(anim);
     }
 
-    Bitmap encodeAsBitmap(String str) throws WriterException {
+    /*Bitmap encodeAsBitmap(String str) throws WriterException {
     const int black = 0xFF000000;
     const int white = 0xFFFFFFFF;
         BitMatrix result;
@@ -161,5 +161,5 @@ public class PaymentActivity extends AppCompatActivity {
             return null;
         }
         return bitmap;
-    }
+    }*/
 }

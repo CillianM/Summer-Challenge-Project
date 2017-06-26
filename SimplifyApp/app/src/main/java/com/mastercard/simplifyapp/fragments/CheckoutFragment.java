@@ -35,8 +35,6 @@ public class CheckoutFragment extends Fragment {
     SimplifyTextView priceView;
     FloatingActionButton scanBarcode,takePicture,checkout;
     ArrayList<StoreItem> storeItems;
-    SwitchCompat willRefund;
-    SimplifyTextView refundStatusText;
     ProgressBar checkoutCircle;
 
 
@@ -59,22 +57,6 @@ public class CheckoutFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
-        refundStatusText = (SimplifyTextView) getView().findViewById(R.id.refundStatus);
-        willRefund = (SwitchCompat) getView().findViewById(R.id.refund_switch);
-        willRefund.setOnClickListener(new AdapterView.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean isRefund = willRefund.isChecked();
-                if(isRefund)
-                {
-                    refundStatusText.setText(R.string.refund);
-                }
-                else
-                {
-                    refundStatusText.setText(R.string.sale);
-                }
-            }
-        });
         checkout = (FloatingActionButton) getView().findViewById(R.id.confirm_transaction);
         checkout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,27 +111,18 @@ public class CheckoutFragment extends Fragment {
 
     private void commitTransaction() {
         Intent i = new Intent(this.getActivity(), PaymentActivity.class);
-        boolean isRefund = willRefund.isChecked();
-        if(isRefund)
-        {
-            i.putExtra("isRefund",isRefund);
-        }
-        else
-        {
-            i.putExtra("isRefund", isRefund);
-        }
         i.putExtra("transaction", new Transaction());
         startActivity(i);
     }
 
 
     private void calculateTotal() {
-        int total = 0;
+        double total = 0;
         for(StoreItem item: storeItems)
         {
             total += item.getPrice();
         }
-        checkoutCircle.setProgress(total % 100);
+        checkoutCircle.setProgress((int) (total % 100));
 
         String currency = getResources().getString(R.string.euro);
         String price = currency + total;

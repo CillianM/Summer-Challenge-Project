@@ -18,28 +18,6 @@
             android:layout_height="match_parent">
 
 
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/refund_switch"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                android:paddingTop="10dp"
-                android:paddingEnd="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <com.mastercard.simplifyapp.widgets.SimplifyTextView
-                android:id="@+id/refundStatus"
-                android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="10dp"
-                android:paddingEnd="10dp"
-                android:layout_toLeftOf="@+id/refund_switch"
-                android:text="@string/sale"
-                android:textSize="20dp"/>
-
-
-
             <ProgressBar
                 android:id="@+id/checkoutCircle"
                 style="?android:attr/progressBarStyleHorizontal"

@@ -1,10 +1,5 @@
 package com.mastercard.simplifyapp.objects;
 
-import android.os.Parcelable;
-
-import java.util.ArrayList;
-import java.util.stream.Stream;
-
 /**
  * Created by Cillian on 10/05/2017.
  */
@@ -12,7 +7,7 @@ import java.util.stream.Stream;
 public class StoreItem{
     private String name;
     private String description;
-    private int price;
+    private double price;
     private int quantity;
 
 
@@ -46,7 +41,7 @@ public class StoreItem{
         this.description = description;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
@@ -58,7 +53,7 @@ public class StoreItem{
 
 
     public String getPriceString() {
-        return Integer.toString(price);
+        return Double.toString(price);
     }
 
     public int getQuantity() {
