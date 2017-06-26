@@ -1,4 +1,4 @@
-package com.mastercard.simplifyapp;
+package com.mastercard.simplifyapp.objects;
 
 import com.simplify.android.sdk.Card;
 

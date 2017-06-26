@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mastercard.simplifyapp.NavItem;
+import com.mastercard.simplifyapp.objects.NavItem;
 import com.mastercard.simplifyapp.R;
 
 import java.util.ArrayList;

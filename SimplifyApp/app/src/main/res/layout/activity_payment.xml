@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.mastercard.simplifyapp.PaymentActivity">
+
+
+    <ImageView
+        android:id="@+id/card_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="100dp"
+        android:onClick="cardView"
+        android:src="@drawable/ic_credit_card_black_48dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/qr_image" />
+
+    <ImageView
+        android:id="@+id/qr_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="100dp"
+        android:onClick="qrView"
+        android:src="@drawable/qr"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/qr_code_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/qr_code"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:src="@drawable/qr"/>
+
+        </RelativeLayout>
+
+    <com.braintreepayments.cardform.view.CardForm
+        android:visibility="gone"
+        android:id="@+id/card_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

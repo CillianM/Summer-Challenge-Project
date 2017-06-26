@@ -11,7 +11,7 @@ import android.widget.ListView;
 import com.github.clans.fab.FloatingActionButton;
 import com.mastercard.simplifyapp.adapters.CustomerListAdapter;
 import com.mastercard.simplifyapp.R;
-import com.mastercard.simplifyapp.Customer;
+import com.mastercard.simplifyapp.objects.Customer;
 
 import java.util.ArrayList;
 

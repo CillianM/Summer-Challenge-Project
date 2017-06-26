@@ -5,10 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mastercard.simplifyapp.Customer;
+import com.mastercard.simplifyapp.objects.Customer;
 import com.mastercard.simplifyapp.R;
 import com.github.pavlospt.roundedletterview.RoundedLetterView;
 

@@ -15,9 +15,11 @@ import android.widget.ProgressBar;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.mastercard.simplifyapp.AuthenticateActivity;
+import com.mastercard.simplifyapp.PaymentActivity;
 import com.mastercard.simplifyapp.R;
-import com.mastercard.simplifyapp.StoreItem;
+import com.mastercard.simplifyapp.objects.StoreItem;
 import com.mastercard.simplifyapp.adapters.StoreListAdapter;
+import com.mastercard.simplifyapp.objects.Transaction;
 import com.mastercard.simplifyapp.widgets.SimplifyTextView;
 
 import java.util.ArrayList;
@@ -126,7 +128,7 @@ public class CheckoutFragment extends Fragment {
     }
 
     private void commitTransaction() {
-        Intent i = new Intent(this.getActivity(), AuthenticateActivity.class);
+        Intent i = new Intent(this.getActivity(), PaymentActivity.class);
         boolean isRefund = willRefund.isChecked();
         if(isRefund)
         {
@@ -136,6 +138,7 @@ public class CheckoutFragment extends Fragment {
         {
             i.putExtra("isRefund", isRefund);
         }
+        i.putExtra("transaction", new Transaction());
         startActivity(i);
     }
 

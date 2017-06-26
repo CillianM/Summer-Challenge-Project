@@ -10,15 +10,12 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import com.github.clans.fab.FloatingActionButton;
-import com.mastercard.simplifyapp.NavItem;
+import com.mastercard.simplifyapp.objects.NavItem;
 import com.mastercard.simplifyapp.R;
 import com.mastercard.simplifyapp.adapters.DrawerListAdapter;
-import com.simplify.android.sdk.Customer;
 
 import java.util.ArrayList;
 

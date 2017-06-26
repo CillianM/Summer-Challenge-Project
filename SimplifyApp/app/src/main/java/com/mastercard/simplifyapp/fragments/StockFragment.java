@@ -3,7 +3,6 @@ package com.mastercard.simplifyapp.fragments;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.LayoutInflater;
@@ -11,19 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.mastercard.simplifyapp.ItemViewActivity;
 import com.mastercard.simplifyapp.R;
-import com.mastercard.simplifyapp.StoreItem;
+import com.mastercard.simplifyapp.objects.StoreItem;
 import com.mastercard.simplifyapp.adapters.StoreListAdapter;
-import com.mastercard.simplifyapp.widgets.SimplifyTextView;
 
 import java.util.ArrayList;
-
-import io.card.payment.CardIOActivity;
-import io.card.payment.CreditCard;
 
 /**
  * Created by e069278 on 23/05/2017.

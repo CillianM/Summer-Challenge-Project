@@ -1,4 +1,4 @@
-package com.mastercard.simplifyapp;
+package com.mastercard.simplifyapp.objects;
 
 import android.os.Parcelable;
 

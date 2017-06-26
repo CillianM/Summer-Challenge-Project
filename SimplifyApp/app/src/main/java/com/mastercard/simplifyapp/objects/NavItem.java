@@ -1,4 +1,4 @@
-package com.mastercard.simplifyapp;
+package com.mastercard.simplifyapp.objects;
 
 /**
  * Created by Cillian on 10/05/2017.

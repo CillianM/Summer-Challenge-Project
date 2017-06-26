@@ -1,17 +1,12 @@
 package com.mastercard.simplifyapp;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.mastercard.simplifyapp.objects.Customer;
 import com.mastercard.simplifyapp.widgets.SimplifyEditText;
 import com.mastercard.simplifyapp.widgets.SimplifyTextView;
 import com.simplify.android.sdk.Card;

@@ -9,9 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.mastercard.simplifyapp.R;
-import com.mastercard.simplifyapp.StoreItem;
+import com.mastercard.simplifyapp.objects.StoreItem;
 import com.mastercard.simplifyapp.utility.ColorGenerator;
 import com.mastercard.simplifyapp.utility.TextDrawable;
 

@@ -46,12 +46,11 @@
         <activity
             android:name=".UserConfigActivity"
             android:label="User Settings"
-            android:theme="@style/AppTheme"></activity>
-
-        <activity android:name=".UserRegistrationActivity"
-            android:label="User Registration">
-
-        </activity>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".UserRegistrationActivity"
+            android:label="User Registration"></activity>
+        <activity android:name=".PaymentActivity"></activity>
     </application>
 
 </manifest>
