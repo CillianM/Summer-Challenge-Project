@@ -17,6 +17,10 @@ import android.widget.Toast;
 
 import com.braintreepayments.cardform.view.CardForm;
 import com.github.clans.fab.FloatingActionButton;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.mastercard.mpqr.pushpayment.model.AdditionalData;
 import com.mastercard.mpqr.pushpayment.model.PushPaymentData;
 import com.mastercard.simplifyapp.interfaces.OnTaskCompleted;
@@ -276,7 +280,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
 
     @Override
     public void onTaskCompleted() {
-        //qrCode = creator.getBitmap();
+        qrCode = creator.getBitmap();
         ImageView qrCodeView = (ImageView) findViewById(R.id.qr_code);
         qrCodeView.setImageBitmap(qrCode);
         findViewById(R.id.qr_code_progress).setVisibility(View.GONE);

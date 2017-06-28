@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,14 +22,16 @@ import java.util.ArrayList;
  * Created by Cillian on 10/05/2017.
  */
 
-public class StoreListAdapter extends BaseAdapter {
+public class StoreListAdapter extends BaseAdapter implements Filterable {
 
     Context mContext;
     ArrayList<StoreItem> mNavItems;
+    ArrayList<StoreItem> originalList;
 
     public StoreListAdapter(Context context, ArrayList<StoreItem> navItems) {
         mContext = context;
         mNavItems = navItems;
+        originalList = new ArrayList<>(mNavItems);
     }
 
     @Override
@@ -69,5 +73,39 @@ public class StoreListAdapter extends BaseAdapter {
         priceView.setText("€" + mNavItems.get(position).getPriceString() );
 
         return view;
+    }
+
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                final FilterResults toReturn = new FilterResults();
+                final ArrayList<StoreItem> items = new ArrayList<>();
+                if(constraint != null)
+                {
+                    if(originalList.size() > 0)
+                    {
+                        for(StoreItem item: originalList)
+                        {
+                            if(item.getName().toLowerCase().contains(constraint.toString()))
+                                items.add(item);
+                        }
+                    }
+                    toReturn.values = items;
+                    return toReturn;
+                }
+                return toReturn;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mNavItems = (ArrayList<StoreItem>) results.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
+
+    public void notifyDataSetChanged(){
+        super.notifyDataSetChanged();
     }
 }

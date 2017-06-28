@@ -2,9 +2,9 @@ package com.mastercard.simplifyapp.fragments;
 
 import android.animation.Animator;
 import android.annotation.TargetApi;
-import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -13,9 +13,9 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import com.mastercard.simplifyapp.objects.NavItem;
 import com.mastercard.simplifyapp.R;
 import com.mastercard.simplifyapp.adapters.DrawerListAdapter;
+import com.mastercard.simplifyapp.objects.NavItem;
 
 import java.util.ArrayList;
 

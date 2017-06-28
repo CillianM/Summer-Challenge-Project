@@ -1,10 +1,10 @@
 package com.mastercard.simplifyapp.fragments;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +14,8 @@ import android.widget.ListView;
 import com.github.clans.fab.FloatingActionButton;
 import com.mastercard.simplifyapp.ItemViewActivity;
 import com.mastercard.simplifyapp.R;
-import com.mastercard.simplifyapp.objects.StoreItem;
 import com.mastercard.simplifyapp.adapters.StoreListAdapter;
+import com.mastercard.simplifyapp.objects.StoreItem;
 
 import java.util.ArrayList;
 

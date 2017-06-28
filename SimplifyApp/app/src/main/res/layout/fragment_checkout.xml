@@ -17,36 +17,27 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
-            <ProgressBar
-                android:id="@+id/checkoutCircle"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:max="100"
-                android:progress="25"
-                android:progressDrawable="@drawable/circular"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
-
-            <com.mastercard.simplifyapp.widgets.SimplifyTextView
-                android:id="@+id/total"
-                android:gravity="center"
+            <android.support.v4.view.ViewPager
+                android:id="@+id/basket_info"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="0.0"
-                android:textSize="60dp"/>
+                android:layout_height="match_parent"/>
+
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_weight="50"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <SearchView
+                android:id="@+id/search_stock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/checkout_items"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:layout_below="@id/search_stock"/>
 
             <com.github.clans.fab.FloatingActionMenu
                 android:id="@+id/menu"
