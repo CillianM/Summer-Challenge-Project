@@ -3,9 +3,10 @@ package com.mastercard.simplifyapp;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.animation.Animation;
@@ -16,34 +17,28 @@ import android.widget.Toast;
 
 import com.braintreepayments.cardform.view.CardForm;
 import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 import com.mastercard.mpqr.pushpayment.model.AdditionalData;
 import com.mastercard.mpqr.pushpayment.model.PushPaymentData;
 import com.mastercard.simplifyapp.interfaces.OnTaskCompleted;
 import com.mastercard.simplifyapp.objects.Transaction;
+import com.pro100svitlo.creditCardNfcReader.CardNfcAsyncTask;
+import com.pro100svitlo.creditCardNfcReader.utils.CardNfcUtils;
 import com.simplify.android.sdk.Card;
 import com.simplify.android.sdk.CardToken;
 import com.simplify.android.sdk.Simplify;
 
-import static com.mastercard.simplifyapp.R.id.card_number;
-import static com.mastercard.simplifyapp.R.id.total;
+public class PaymentActivity extends AppCompatActivity implements OnTaskCompleted,CardNfcAsyncTask.CardNfcInterface {
 
-public class PaymentActivity extends AppCompatActivity implements OnTaskCompleted {
-
-    private static final int WIDTH = 200;
     Bitmap qrCode;
     BitmapCreator creator;
-    boolean showingBitmap = false;
-    boolean completed = false;
     String qrContent;
     CardForm cardForm;
     Simplify simplify;
     CardToken token;
+    NfcAdapter mNfcAdapter;
+    CardNfcUtils mCardNfcUtils;
+    CardNfcAsyncTask mCardNfcAsyncTask;
+    boolean mIntentFromCreate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +55,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
         cardForm.cardRequired(true)
                 .expirationRequired(true)
                 .cvvRequired(true)
-                .postalCodeRequired(true)
+                .postalCodeRequired(false)
                 .mobileNumberRequired(false)
                 .actionLabel("Purchase")
                 .setup(this);
@@ -92,6 +87,85 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(),"Error Occured",Toast.LENGTH_SHORT).show();
         }
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (mNfcAdapter == null){
+            //do something if there are no nfc module on device
+        } else {
+            //do something if there are nfc module on device
+
+            mCardNfcUtils = new CardNfcUtils(this);
+            //next few lines here needed in case you will scan credit card when app is closed
+            mIntentFromCreate = true;
+            onNewIntent(getIntent());
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mIntentFromCreate = false;
+        if (mNfcAdapter != null && !mNfcAdapter.isEnabled()){
+            //show some turn on nfc dialog here. take a look in the samle ;-)
+        } else if (mNfcAdapter != null){
+            mCardNfcUtils.enableDispatch();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mNfcAdapter != null) {
+            mCardNfcUtils.disableDispatch();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
+            //this - interface for callbacks
+            //intent = intent :)
+            //mIntentFromCreate - boolean flag, for understanding if onNewIntent() was called from onCreate or not
+            mCardNfcAsyncTask = new CardNfcAsyncTask.Builder(this, intent, mIntentFromCreate).build();
+        }
+    }
+
+    @Override
+    public void startNfcReadCard() {
+        findViewById(R.id.card_image).setVisibility(View.GONE);
+        findViewById(R.id.qr_image).setVisibility(View.GONE);
+        findViewById(R.id.card_form).setVisibility(View.VISIBLE);
+        findViewById(R.id.confirm_transaction).setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void cardIsReadyToRead() {
+        cardForm.getCardEditText().setText(mCardNfcAsyncTask.getCardNumber());
+        String expirationDate = mCardNfcAsyncTask.getCardExpireDate();
+        expirationDate = expirationDate.substring(0,expirationDate.indexOf("/")) + "20" + expirationDate.substring(expirationDate.indexOf("/") +1);
+        cardForm.getExpirationDateEditText().setText(expirationDate);
+        String cardType = mCardNfcAsyncTask.getCardType();
+
+    }
+
+    @Override
+    public void doNotMoveCardSoFast() {
+        Toast.makeText(this,"Don't move the card so fast",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void unknownEmvCard() {
+        Toast.makeText(this,"Unknown Card",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void cardWithLockedNfc() {
+        Toast.makeText(this,"NFC Locked",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void finishNfcReadCard() {
+        //notify user that scannig finished
     }
 
     public void qrView(View view) {
@@ -123,7 +197,6 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
             }
 
             public void onAnimationEnd(Animation animation) {
-                showingBitmap = true;
                 findViewById(R.id.card_image).setVisibility(View.GONE);
                 findViewById(R.id.qr_image).setVisibility(View.GONE);
                 findViewById(R.id.qr_code_layout).setVisibility(View.VISIBLE);
@@ -203,7 +276,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
 
     @Override
     public void onTaskCompleted() {
-        qrCode = creator.getBitmap();
+        //qrCode = creator.getBitmap();
         ImageView qrCodeView = (ImageView) findViewById(R.id.qr_code);
         qrCodeView.setImageBitmap(qrCode);
         findViewById(R.id.qr_code_progress).setVisibility(View.GONE);

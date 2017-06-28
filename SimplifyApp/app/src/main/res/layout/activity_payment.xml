@@ -56,7 +56,8 @@
         android:visibility="gone"
         android:id="@+id/card_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"/>
 
     <com.github.clans.fab.FloatingActionButton
         android:visibility="gone"
