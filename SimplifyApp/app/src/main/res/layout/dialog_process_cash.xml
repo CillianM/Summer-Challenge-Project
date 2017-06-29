@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="400dp"
+    android:layout_height="400dp"
+    android:layout_margin="25dp"
+    android:padding="50dp">
+
+    <TextView
+        android:id="@+id/total_due"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total: "
+        android:textSize="18sp"
+        android:padding="10dp"/>
+
+    <EditText
+        android:id="@+id/entered_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Amount"
+        android:padding="10dp"/>
+
+    <TextView
+        android:id="@+id/change_due"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Change: "
+        android:textSize="18sp"
+        android:padding="10dp"/>
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Verify"
+        android:layout_gravity="center"
+        android:padding="10dp"
+        />
+
+</LinearLayout>

@@ -1,72 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root_layout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100"
     tools:context="com.mastercard.simplifyapp.PaymentActivity">
 
-
-    <ImageView
-        android:id="@+id/card_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="100dp"
-        android:onClick="cardView"
-        android:src="@drawable/ic_credit_card_black_48dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/qr_image" />
-
-    <ImageView
-        android:id="@+id/qr_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginBottom="100dp"
-        android:onClick="qrView"
-        android:src="@drawable/qr"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
-
-    <RelativeLayout
-        android:visibility="gone"
-        android:id="@+id/qr_code_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/qr_code"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:src="@drawable/qr"
-            android:visibility="gone"/>
-
-        <ProgressBar
-            android:id="@+id/qr_code_progress"
-            android:indeterminate="true"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"/>
-
-        </RelativeLayout>
-
     <com.braintreepayments.cardform.view.CardForm
-        android:visibility="gone"
+        android:layout_weight="30"
         android:id="@+id/card_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"/>
+        android:layout_height="0dp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="70">
+
+        <ImageView
+            android:id="@+id/qr_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:onClick="qrView"
+            android:src="@drawable/masterpass_logo"
+            android:layout_centerInParent="true" />
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/qr_code"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:src="@drawable/qr"
+            android:layout_centerHorizontal="true" />
+
+        <ProgressBar
+            android:visibility="gone"
+            android:id="@+id/qr_code_progress"
+            android:indeterminate="true"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
 
     <com.github.clans.fab.FloatingActionButton
-        android:visibility="gone"
         android:id="@+id/confirm_transaction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|end"
         android:src="@drawable/check"
         android:layout_marginRight="10dp"
         android:layout_marginEnd="10dp"
@@ -75,4 +60,4 @@
         app:fab_colorPressed="@color/colorPrimary"
         />
 
-</RelativeLayout>
+</LinearLayout>

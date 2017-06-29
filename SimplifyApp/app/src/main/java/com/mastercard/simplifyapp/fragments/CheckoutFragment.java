@@ -74,7 +74,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         scanBarcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addItem();
+
             }
 
         });
@@ -82,7 +82,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         takePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addItem();
+
             }
 
         });
@@ -93,7 +93,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         savedItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                addCheckoutItem(storeItems.get(position));
             }
 
         });
@@ -116,6 +116,12 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
 
     }
 
+    private void addCheckoutItem(StoreItem storeItem) {
+        checkoutItems.add(storeItem);
+        calculateTotal();
+        mPagerAdapter.notifyDataSetChanged();
+    }
+
     private void setupSearch()
     {
         searchView.setIconifiedByDefault(true);
@@ -133,7 +139,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
 
     private void calculateTotal() {
         total = 0;
-        for(StoreItem item: storeItems)
+        for(StoreItem item: checkoutItems)
         {
             total += item.getPrice();
         }
@@ -149,8 +155,8 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         storeItems.add(new StoreItem("Sandwich","This is Item eight", 4));
 
         StoreListAdapter adapter = new StoreListAdapter(getActivity(), storeItems);
+        checkoutItems = new ArrayList<>();
         calculateTotal();
-        checkoutItems = new ArrayList<>(storeItems);
         savedItems.setAdapter(adapter);
         mPagerAdapter.notifyDataSetChanged();
     }

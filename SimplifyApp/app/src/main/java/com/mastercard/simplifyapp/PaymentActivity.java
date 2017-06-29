@@ -6,13 +6,14 @@ import android.graphics.Color;
 import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.braintreepayments.cardform.view.CardForm;
@@ -23,6 +24,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.mastercard.mpqr.pushpayment.model.AdditionalData;
 import com.mastercard.mpqr.pushpayment.model.PushPaymentData;
+import com.mastercard.simplifyapp.fragments.ProcessCashFragment;
 import com.mastercard.simplifyapp.interfaces.OnTaskCompleted;
 import com.mastercard.simplifyapp.objects.Transaction;
 import com.pro100svitlo.creditCardNfcReader.CardNfcAsyncTask;
@@ -43,6 +45,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
     CardNfcUtils mCardNfcUtils;
     CardNfcAsyncTask mCardNfcAsyncTask;
     boolean mIntentFromCreate;
+    Transaction currentTransaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +56,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
 
 
         Intent intent = getIntent();
-        Transaction currentTransaction = (Transaction)intent.getSerializableExtra("transaction");
+        currentTransaction = (Transaction)intent.getSerializableExtra("transaction");
 
         cardForm = (CardForm) findViewById(R.id.card_form);
         cardForm.cardRequired(true)
@@ -63,7 +66,6 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
                 .mobileNumberRequired(false)
                 .actionLabel("Purchase")
                 .setup(this);
-        cardForm.setVisibility(View.GONE);
 
         AdditionalData additionalData = new AdditionalData();
         additionalData.setTerminalId("45784312");
@@ -102,6 +104,39 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
             mIntentFromCreate = true;
             onNewIntent(getIntent());
         }
+
+        FloatingActionButton submit = (FloatingActionButton) findViewById(R.id.confirm_transaction);
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                verifyTransaction();
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_viewer, menu);
+        return true;
+    }
+
+    //allow user to share current series as a link
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent sendIntent;
+        switch (item.getItemId()) {
+            case R.id.action_cash:
+                FragmentManager fm = getSupportFragmentManager();
+                ProcessCashFragment editNameDialogFragment = ProcessCashFragment.newInstance("Process Cash",currentTransaction.getTransactionAmount());
+                editNameDialogFragment.show(fm, "fragment_edit_name");
+                break;
+
+            default:
+                break;
+        }
+
+        return true;
     }
 
     @Override
@@ -136,9 +171,6 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
 
     @Override
     public void startNfcReadCard() {
-        findViewById(R.id.card_image).setVisibility(View.GONE);
-        findViewById(R.id.qr_image).setVisibility(View.GONE);
-        findViewById(R.id.card_form).setVisibility(View.VISIBLE);
         findViewById(R.id.confirm_transaction).setVisibility(View.VISIBLE);
     }
 
@@ -173,88 +205,14 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
     }
 
     public void qrView(View view) {
+        final ImageView logoView = (ImageView) findViewById(R.id.qr_image);
+        final ProgressBar progressView = (ProgressBar) findViewById(R.id.qr_code_progress);
+        logoView.setVisibility(View.GONE);
+        progressView.setVisibility(View.VISIBLE);
         creator = new BitmapCreator(qrContent, this);
         creator.execute();
-        final RelativeLayout root = (RelativeLayout) findViewById(R.id.root_layout);
-        final ImageView imageView = (ImageView) findViewById(R.id.qr_image);
-        DisplayMetrics dm = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int statusBarOffset = dm.heightPixels - root.getMeasuredHeight();
-        final int originalPos[] = new int[2];
-        imageView.getLocationOnScreen(originalPos);
-        final int xDest = (dm.widthPixels / 2) - (imageView.getMeasuredWidth() / 2);
-        final int yDest = dm.heightPixels / 2 - (imageView.getMeasuredHeight() / 2)- statusBarOffset;
-
-        TranslateAnimation anim = new TranslateAnimation(0, xDest
-                - originalPos[0], 0, yDest - originalPos[1]);
-        anim.setDuration(1000);
-        anim.setAnimationListener(new Animation.AnimationListener() {
-
-            public void onAnimationStart(Animation animation) {
-                findViewById(R.id.card_image).setVisibility(View.INVISIBLE);
-
-            }
-
-            public void onAnimationRepeat(Animation animation) {
-                // TODO Auto-generated method stub
-
-            }
-
-            public void onAnimationEnd(Animation animation) {
-                findViewById(R.id.card_image).setVisibility(View.GONE);
-                findViewById(R.id.qr_image).setVisibility(View.GONE);
-                findViewById(R.id.qr_code_layout).setVisibility(View.VISIBLE);
-            }
-        });
-        imageView.startAnimation(anim);
-
     }
 
-    public void cardView(View view) {
-        final FloatingActionButton confirm = (FloatingActionButton) findViewById(R.id.confirm_transaction);
-        confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                verifyTransaction();
-            }
-
-
-        });
-
-        final RelativeLayout root = (RelativeLayout) findViewById(R.id.root_layout);
-        final ImageView imageView = (ImageView) findViewById(R.id.card_image);
-        DisplayMetrics dm = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int statusBarOffset = dm.heightPixels - root.getMeasuredHeight();
-        final int originalPos[] = new int[2];
-        imageView.getLocationOnScreen(originalPos);
-        final int xDest = (dm.widthPixels / 2) - (imageView.getMeasuredWidth() / 2);
-        final int yDest = dm.heightPixels / 2 - (imageView.getMeasuredHeight() / 2)- statusBarOffset;
-
-        TranslateAnimation anim = new TranslateAnimation(0, xDest
-                - originalPos[0], 0, yDest - originalPos[1]);
-        anim.setDuration(600);
-        anim.setAnimationListener(new Animation.AnimationListener() {
-
-            public void onAnimationStart(Animation animation) {
-                findViewById(R.id.qr_image).setVisibility(View.INVISIBLE);
-
-            }
-
-            public void onAnimationRepeat(Animation animation) {
-                // TODO Auto-generated method stub
-
-            }
-
-            public void onAnimationEnd(Animation animation) {
-                findViewById(R.id.card_image).setVisibility(View.GONE);
-                findViewById(R.id.qr_image).setVisibility(View.GONE);
-                findViewById(R.id.card_form).setVisibility(View.VISIBLE);
-                confirm.setVisibility(View.VISIBLE);
-            }
-        });
-        imageView.startAnimation(anim);
-    }
 
     void verifyTransaction() {
 

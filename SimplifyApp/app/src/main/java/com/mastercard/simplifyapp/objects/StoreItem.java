@@ -53,7 +53,7 @@ public class StoreItem{
 
 
     public String getPriceString() {
-        return Double.toString(price);
+        return String.format("%.2f",price);
     }
 
     public int getQuantity() {

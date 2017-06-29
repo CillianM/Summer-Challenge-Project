@@ -43,7 +43,8 @@ public class CheckoutTotalFragment extends Fragment implements UpdateableFragmen
         checkoutCircle = (ProgressBar) view.findViewById(R.id.checkoutCircle);
         checkoutCircle.setProgress((int) (total % 100));
         String currency = getResources().getString(R.string.euro);
-        String price = currency + total;
+        String price = currency + String.format("%.2f",total);
+
         priceView.setText(price);
 
     }
@@ -53,7 +54,7 @@ public class CheckoutTotalFragment extends Fragment implements UpdateableFragmen
         total = object.getTotal();
         checkoutCircle.setProgress((int) (total % 100));
         String currency = getResources().getString(R.string.euro);
-        String price = currency + total;
+        String price = currency + String.format("%.2f",total);
         priceView.setText(price);
     }
 
