@@ -1,12 +1,14 @@
 package com.mastercard.simplifyapp;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,7 +26,6 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.mastercard.mpqr.pushpayment.model.AdditionalData;
 import com.mastercard.mpqr.pushpayment.model.PushPaymentData;
-import com.mastercard.simplifyapp.fragments.ProcessCashFragment;
 import com.mastercard.simplifyapp.interfaces.OnTaskCompleted;
 import com.mastercard.simplifyapp.objects.Transaction;
 import com.pro100svitlo.creditCardNfcReader.CardNfcAsyncTask;
@@ -71,7 +72,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
         additionalData.setTerminalId("45784312");
         additionalData.setReferenceId("Test Ref");
         additionalData.setStoreId("A6008");
-        additionalData.setPurpose(currentTransaction.getItems());
+        additionalData.setPurpose("MEPOS Sale");
         additionalData.setLoyaltyNumber("000");
 
         PushPaymentData data = new PushPaymentData();
@@ -83,7 +84,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
         data.setMerchantCategoryCode("5204");
         data.setMerchantCity("Dublin");
         data.setMerchantName("Test Merchant");
-        data.setTransactionAmount(19.99);
+        data.setTransactionAmount(currentTransaction.getTransactionAmount());
         data.setTransactionCurrencyCode("978");
         data.setAdditionalData(additionalData);
         try {
@@ -92,6 +93,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
             qrContent = data.generatePushPaymentString();
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(),"Error Occured",Toast.LENGTH_SHORT).show();
+            findViewById(R.id.qr_image).setVisibility(View.GONE);
         }
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null){
@@ -127,9 +129,26 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
         Intent sendIntent;
         switch (item.getItemId()) {
             case R.id.action_cash:
-                FragmentManager fm = getSupportFragmentManager();
-                ProcessCashFragment editNameDialogFragment = ProcessCashFragment.newInstance("Process Cash",currentTransaction.getTransactionAmount());
-                editNameDialogFragment.show(fm, "fragment_edit_name");
+                final Activity currentActivity = this;
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+                                Toast.makeText(getApplicationContext(),"Transaction Saved",Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(currentActivity,StoreActivity.class);
+                                startActivity(intent);
+                                finish();
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Charge " + currentTransaction.getTransactionAmount() + " as cash?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
                 break;
 
             default:

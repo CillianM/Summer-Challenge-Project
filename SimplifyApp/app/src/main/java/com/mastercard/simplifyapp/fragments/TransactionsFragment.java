@@ -1,6 +1,7 @@
 package com.mastercard.simplifyapp.fragments;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -15,6 +16,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.mastercard.simplifyapp.R;
 import com.mastercard.simplifyapp.TransactionViewActivity;
 import com.mastercard.simplifyapp.adapters.TransactionListAdapter;
+import com.mastercard.simplifyapp.handlers.TransactionHandler;
 import com.mastercard.simplifyapp.objects.Transaction;
 
 import java.util.ArrayList;
@@ -80,23 +82,36 @@ public class TransactionsFragment extends Fragment {
 
     }
 
+    void populateStoreList()
+    {
+        TransactionHandler handler = new TransactionHandler(getActivity().getBaseContext());
+        handler.open();
+        int length = handler.returnAmount();
 
-    private void populateStoreList() {
+
+        if(length < 1)
+        {
+            handler.insertData(2.99,"Sean","1,2,3");
+            handler.insertData(4.99,"Unknown","1,2,3");
+            handler.insertData(3.99,"Mary","1,2,3");
+            handler.insertData(2.00,"Unknown","1,2,3");
+        }
 
         storeItems = new ArrayList<>();
-        storeItems.add(new Transaction("Sean","Test Merchant",2.99,"1,2,3,4,5"));
-        storeItems.add(new Transaction("Sean","Test Merchant",2.50,"1,2,3,4,5"));
-        storeItems.add(new Transaction("Sean","Test Merchant",3.99,"1,2,3,4,5"));
-        storeItems.add(new Transaction("Sean","Test Merchant",4.99,"1,2,3,4,5"));
-        storeItems.add(new Transaction("Sean","Test Merchant",12.99,"1,2,3,4,5"));
-        storeItems.add(new Transaction("Sean","Test Merchant",11.99,"1,2,3,4,5"));
-        storeItems.add(new Transaction("Sean","Test Merchant",2.78,"1,2,3,4,5"));
+        Cursor c1 = handler.returnData();
+        if (c1.moveToFirst()) {
+            do {
+                storeItems.add(new Transaction(c1.getString(0),c1.getFloat(1),c1.getString(2),c1.getString(3)));
+            }
+            while (c1.moveToNext());
+        }
+
+        handler.close();
 
         TransactionListAdapter adapter = new TransactionListAdapter(getActivity(), storeItems);
 
         itemsList.setAdapter(adapter);
     }
-
 
     private void removeItem(int index) {
         storeItems.remove(index);

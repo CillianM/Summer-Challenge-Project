@@ -1,7 +1,6 @@
 package com.mastercard.simplifyapp.objects;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -9,73 +8,38 @@ import java.util.Date;
  */
 @SuppressWarnings("serial") //hide compiler warnings
 public class Transaction implements Serializable {
-    String customerName;
-    String merchantName;
-    String merchantCategoryCode;
-    String countryCode;
-    double transactionAmount;
-    String currencyCode;
-    Date date;
-    String items;
+    private String id;
+    private double transactionAmount;
+    private String customerName;
+    private Date date;
+    private String items;
 
 
     public Transaction() {
         super();
     }
 
-    public Transaction(String customerName, String merchantName, String merchantCategoryCode, String countryCode, double transactionAmount, String currencyCode,String items) {
-        this.customerName = customerName;
-        this.merchantName = merchantName;
-        this.merchantCategoryCode = merchantCategoryCode;
-        this.countryCode = countryCode;
+    public Transaction(String id, double transactionAmount,String customerName, String items) {
+        this.id = id;
         this.transactionAmount = transactionAmount;
-        this.currencyCode = currencyCode;
+        this.items = items;
+        this.customerName = customerName;
         this.date = new Date();
-        this.items = items;
     }
 
-    public Transaction(String customerName, String merchantName, double transactionAmount, String items) {
-        this.customerName = customerName;
-        this.merchantName = merchantName;
+    public Transaction(double transactionAmount, String customerName, String items) {
         this.transactionAmount = transactionAmount;
+        this.customerName =customerName;
         this.items = items;
-
-        merchantCategoryCode = "5204";
-        countryCode = "IE";
-        currencyCode = "EUR";
-        date = new Date();
+        this.date = new Date();
     }
 
-    public String getCustomerName() {
-        return customerName;
+    public String getId() {
+        return id;
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public String getMerchantName() {
-        return merchantName;
-    }
-
-    public void setMerchantName(String merchantName) {
-        this.merchantName = merchantName;
-    }
-
-    public String getMerchantCategoryCode() {
-        return merchantCategoryCode;
-    }
-
-    public void setMerchantCategoryCode(String merchantCategoryCode) {
-        this.merchantCategoryCode = merchantCategoryCode;
-    }
-
-    public String getCountryCode() {
-        return countryCode;
-    }
-
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public double getTransactionAmount() {
@@ -84,14 +48,6 @@ public class Transaction implements Serializable {
 
     public void setTransactionAmount(double transactionAmount) {
         this.transactionAmount = transactionAmount;
-    }
-
-    public String getCurrencyCode() {
-        return currencyCode;
-    }
-
-    public void setCurrencyCode(String currencyCode) {
-        this.currencyCode = currencyCode;
     }
 
     public Date getDate() {
@@ -122,5 +78,13 @@ public class Transaction implements Serializable {
             itemsString += item + ",";
         }
         return itemsString.substring(0,items.length -1);
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 }

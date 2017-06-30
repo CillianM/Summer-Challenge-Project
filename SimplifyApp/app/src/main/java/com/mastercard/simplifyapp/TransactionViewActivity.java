@@ -4,9 +4,9 @@ import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -63,10 +63,10 @@ public class TransactionViewActivity extends AppCompatActivity {
         heading.setText(transaction.getCustomerName());
 
         TextView desc= (TextView)findViewById(R.id.desc);
-        desc.setText(transaction.getMerchantName());
+        desc.setText(transaction.getItems());
 
         TextView priceView = (TextView)findViewById(R.id.price);
-        priceView.setText(transaction.getTransactionAmount() + "");
+        priceView.setText(String.format("%.2f",transaction.getTransactionAmount()));
 
 
 

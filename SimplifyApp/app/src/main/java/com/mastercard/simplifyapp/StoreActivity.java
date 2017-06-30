@@ -1,5 +1,6 @@
 package com.mastercard.simplifyapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -110,6 +111,8 @@ public class StoreActivity extends AppCompatActivity {
         }
         else
         {
+            Intent intent = new Intent(this,LoginActivity.class);
+            startActivity(intent);
             finish();
         }
     }

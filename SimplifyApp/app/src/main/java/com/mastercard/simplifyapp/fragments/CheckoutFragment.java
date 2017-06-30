@@ -1,6 +1,7 @@
 package com.mastercard.simplifyapp.fragments;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -15,17 +16,22 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.mastercard.simplifyapp.PaymentActivity;
 import com.mastercard.simplifyapp.R;
 import com.mastercard.simplifyapp.adapters.StoreListAdapter;
+import com.mastercard.simplifyapp.handlers.StockHandler;
 import com.mastercard.simplifyapp.interfaces.UpdateableFragment;
 import com.mastercard.simplifyapp.objects.StoreItem;
 import com.mastercard.simplifyapp.objects.Transaction;
 import com.mastercard.simplifyapp.objects.UpdateData;
 
 import java.util.ArrayList;
+
+import static com.mastercard.simplifyapp.utility.DbUtils.generateUUID;
+import static com.mastercard.simplifyapp.utility.DbUtils.round;
 
 /**
  * Created by e069278 on 23/05/2017.
@@ -131,9 +137,24 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
     }
 
     private void commitTransaction() {
-        Intent i = new Intent(this.getActivity(), PaymentActivity.class);
-        i.putExtra("transaction", new Transaction("Sean","Test Merchant",2.99,"1,2,3,4,5"));
-        startActivity(i);
+        if(total > 0) {
+            Intent i = new Intent(this.getActivity(), PaymentActivity.class);
+            i.putExtra("transaction", new Transaction(total, "N/A", getCheckoutIds()));
+            startActivity(i);
+        }
+        else
+        {
+            Toast.makeText(this.getActivity().getApplicationContext(),"Add something to the basket!",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String getCheckoutIds() {
+        String items = "";
+        for(StoreItem item: checkoutItems)
+        {
+            items += item.getId() + ",";
+        }
+        return items.substring(0,items.length()-1);
     }
 
 
@@ -144,15 +165,39 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
             total += item.getPrice();
         }
 
+        total = round(total,2);
         mPagerAdapter.notifyDataSetChanged();
     }
 
-    private void populateStoreList() {
+    void populateStoreList()
+    {
+        StockHandler handler = new StockHandler(getActivity().getBaseContext());
+        handler.open();
+        int length = handler.returnAmount();
+
+
+        if(length < 1)
+        {
+            handler.insertData("Coffee","This is Item one", 2.99,100);
+            handler.insertData("Tea","This is Item two", 1.99,100);
+            handler.insertData("Scone","This is Item three", 1.99,100);
+            handler.insertData("Muffin","This is Item four", 1.99,100);
+            handler.insertData("Cake Slice","This is Item five", 3.99,100);
+            handler.insertData("Orange Juice","This is Item six", 2.00,100);
+            handler.insertData("Bottled Water","This is Item seven", 1.50,100);
+            handler.insertData("Sandwich","This is Item eight", 4.99,100);
+        }
 
         storeItems = new ArrayList<>();
-        storeItems.add(new StoreItem("Coffee","This is Item one", 2));
-        storeItems.add(new StoreItem("Muffin","This is Item four", 1));
-        storeItems.add(new StoreItem("Sandwich","This is Item eight", 4));
+        Cursor c1 = handler.returnData();
+        if (c1.moveToFirst()) {
+            do {
+                storeItems.add(new StoreItem(c1.getString(0), c1.getString(1),c1.getString(2),c1.getFloat(3)));
+            }
+            while (c1.moveToNext());
+        }
+
+        handler.close();
 
         StoreListAdapter adapter = new StoreListAdapter(getActivity(), storeItems);
         checkoutItems = new ArrayList<>();
@@ -162,7 +207,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
     }
 
     public void addItem() {
-        storeItems.add(new StoreItem("New Item","This is a new item that has been added", 1));
+        storeItems.add(new StoreItem(generateUUID().toString(),"New Item","This is a new item that has been added", 1));
         StoreListAdapter adapter = new StoreListAdapter(getActivity(), storeItems);
         checkoutItems = new ArrayList<>(storeItems);
         savedItems.setAdapter(adapter);

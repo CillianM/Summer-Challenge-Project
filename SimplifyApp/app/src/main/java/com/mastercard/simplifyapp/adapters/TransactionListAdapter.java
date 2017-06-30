@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mastercard.simplifyapp.R;
-import com.mastercard.simplifyapp.objects.StoreItem;
 import com.mastercard.simplifyapp.objects.Transaction;
 import com.mastercard.simplifyapp.utility.ColorGenerator;
 import com.mastercard.simplifyapp.utility.TextDrawable;
@@ -69,7 +68,7 @@ public class TransactionListAdapter extends BaseAdapter {
                 .buildRect(mNavItems.get(position).getCustomerName().toUpperCase().substring(0,1), Color.LTGRAY);
         iconView.setImageDrawable(drawable);
         titleView.setText( mNavItems.get(position).getCustomerName() );
-        priceView.setText("€" + mNavItems.get(position).getTransactionAmount() );
+        priceView.setText("€" +  String.format("%.2f",mNavItems.get(position).getTransactionAmount()));
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         String reportDate = df.format(mNavItems.get(position).getDate());
         dateView.setText(reportDate);

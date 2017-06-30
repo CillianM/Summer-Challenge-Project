@@ -5,19 +5,21 @@ package com.mastercard.simplifyapp.objects;
  */
 
 public class StoreItem{
+    private String id;
     private String name;
     private String description;
     private double price;
     private int quantity;
 
 
-    public StoreItem(String name, String description, int price) {
+    public StoreItem(String id, String name, String description, double price) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.quantity = 1;
     }
-    public StoreItem(String name, String description, int price, int quantity) {
+    public StoreItem(String name, String description, double price, int quantity) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -64,4 +66,11 @@ public class StoreItem{
         this.quantity = quantity;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }
