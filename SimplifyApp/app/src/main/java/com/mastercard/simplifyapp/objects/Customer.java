@@ -8,6 +8,28 @@ import com.simplify.android.sdk.Card;
 
 public class Customer {
 
+    private String id;
+    private String name;
+    private String phone;
+    private String email;
+    private Card cardInformation;
+
+    public Customer(String name, String email)
+    {
+        this.name = name;
+        this.email = email;
+    }
+    public Customer(String name)
+    {
+        this.name = name;
+    }
+    public Customer(String name, String email, Card cardInformation)
+    {
+        this.name = name;
+        this.email = email;
+        this.cardInformation = cardInformation;
+    }
+
     public String getName() {
         return name;
     }
@@ -32,24 +54,19 @@ public class Customer {
         this.cardInformation = cardInformation;
     }
 
-    String name;
-    String email;
-    Card cardInformation;
-
-    public Customer(String name, String email)
-    {
-        this.name = name;
-        this.email = email;
-    }
-    public Customer(String name)
-    {
-        this.name = name;
-    }
-    public Customer(String name, String email, Card cardInformation)
-    {
-        this.name = name;
-        this.email = email;
-        this.cardInformation = cardInformation;
+    public String getId() {
+        return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 }

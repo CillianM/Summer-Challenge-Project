@@ -1,5 +1,6 @@
 package com.mastercard.simplifyapp.fragments;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -9,10 +10,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.mastercard.simplifyapp.ItemViewActivity;
 import com.mastercard.simplifyapp.R;
 import com.mastercard.simplifyapp.adapters.StoreListAdapter;
@@ -20,8 +27,6 @@ import com.mastercard.simplifyapp.handlers.StockHandler;
 import com.mastercard.simplifyapp.objects.StoreItem;
 
 import java.util.ArrayList;
-
-import static com.mastercard.simplifyapp.utility.DbUtils.generateUUID;
 
 /**
  * Created by e069278 on 23/05/2017.
@@ -33,6 +38,8 @@ public class StockFragment extends Fragment{
     ArrayList<StoreItem> storeItems;
     ListView itemsList;
     private FloatingActionButton add,edit,count;
+    EditText name,description,price,quantity;
+    StoreListAdapter adapter;
 
     public StockFragment() {
         // Required empty public constructor
@@ -48,7 +55,7 @@ public class StockFragment extends Fragment{
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
+        final FloatingActionMenu menu = (FloatingActionMenu) getView().findViewById(R.id.menu);
         add = (FloatingActionButton) getView().findViewById(R.id.add_item);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +108,22 @@ public class StockFragment extends Fragment{
         });
         itemsList.setTransitionName("reveal");
 
+        itemsList.setOnScrollListener(new AbsListView.OnScrollListener(){
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_IDLE){
+                    menu.showMenu(true);
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (visibleItemCount > totalItemCount && menu.isShown())
+                    menu.hideMenu(true);
+            }
+        });
+
         populateStoreList();
 
     }
@@ -135,20 +158,66 @@ public class StockFragment extends Fragment{
 
         handler.close();
 
-        StoreListAdapter adapter = new StoreListAdapter(getActivity(), storeItems);
+        adapter = new StoreListAdapter(getActivity(), storeItems);
 
         itemsList.setAdapter(adapter);
     }
 
     public void addItem() {
-        storeItems.add(new StoreItem(generateUUID().toString(),"New Item","This is a new item that has been added", 1));
-        StoreListAdapter adapter = new StoreListAdapter(getActivity(), storeItems);
-        itemsList.setAdapter(adapter);
+//        storeItems.add(new StoreItem(generateUUID().toString(),"New Item","This is a new item that has been added", 1));
+//        StoreListAdapter adapter = new StoreListAdapter(getActivity(), storeItems);
+//        itemsList.setAdapter(adapter);
+        // custom dialog
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.setContentView(R.layout.dialog_add_stock);
+        dialog.setTitle("Title...");
+
+        TextView text = (TextView) dialog.findViewById(R.id.text);
+
+        name = (EditText) dialog.findViewById(R.id.name);
+        description = (EditText) dialog.findViewById(R.id.description);
+        price = (EditText) dialog.findViewById(R.id.price);
+        quantity = (EditText) dialog.findViewById(R.id.quantity);
+
+        Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+        // if button is clicked, close the custom dialog
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nameText = name.getText().toString();
+                String descriptionText = description.getText().toString();
+                String quantityText = quantity.getText().toString();
+                try{
+                    int quantitiyNum = Integer.parseInt(quantityText);
+                    double priceNum = Double.parseDouble(price.getText().toString());
+
+                    StockHandler handler = new StockHandler(getActivity().getBaseContext());
+                    handler.open();
+                    handler.insertData(nameText,descriptionText,priceNum,quantitiyNum);
+                    handler.close();
+                    Toast.makeText(getActivity().getApplicationContext(),"Item saved",Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    storeItems.add(new StoreItem(nameText,descriptionText,priceNum,quantitiyNum));
+                    adapter.notifyDataSetChanged();
+                }
+                catch (NumberFormatException e)
+                {
+                    Toast.makeText(getActivity().getApplicationContext(),"Quantity must be a number and Price must be of the form X.XX",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+        dialog.show();
     }
 
+
     private void removeItem(int index) {
+        StockHandler handler = new StockHandler(getActivity().getBaseContext());
+        handler.open();
+        handler.deleteStock(storeItems.get(index).getName());
+        handler.close();
         storeItems.remove(index);
-        StoreListAdapter adapter = new StoreListAdapter(getActivity(), storeItems);
-        itemsList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 }

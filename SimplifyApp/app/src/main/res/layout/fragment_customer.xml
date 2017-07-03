@@ -10,16 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.mastercard.simplifyapp.widgets.SimplifyEditText
-            android:id="@+id/et_searchField"
-            android:layout_width="match_parent"
-            android:layout_height="60dp" />
-
         <ListView
             android:id="@+id/customer_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/et_searchField"
             android:layout_gravity="center_horizontal"
             />
 

@@ -21,10 +21,10 @@ public class StockHandler {
 
     //Database columns
     private static final String ID = "id"; //id for transaction
-    private static final String NAME = "transaction_amount"; //total cost of transaction
-    private static final String DESCRIPTION = "customer"; //person buying items
-    private static final String QUANTITY = "items"; //items in transaction
-    private static final String COST = "time_sent"; //time message was sent
+    private static final String NAME = "name"; //total cost of transaction
+    private static final String DESCRIPTION = "description"; //person buying items
+    private static final String QUANTITY = "quantity"; //items in transaction
+    private static final String COST = "cost"; //time message was sent
 
 
     private static final String TABLE_CREATE = "create table " + TABLE_NAME +
@@ -94,6 +94,11 @@ public class StockHandler {
         content.put(COST,price);
         content.put(QUANTITY,quantity);
         return db.insert(TABLE_NAME,null,content);
+    }
+
+    public void deleteStock(String name)
+    {
+        db.delete(TABLE_NAME, NAME + " = ?", new String[] { name });
     }
 
     public int returnAmount()

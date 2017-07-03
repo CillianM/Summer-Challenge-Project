@@ -1,16 +1,19 @@
 package com.mastercard.simplifyapp.fragments;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.mastercard.simplifyapp.R;
 import com.mastercard.simplifyapp.adapters.CustomerListAdapter;
+import com.mastercard.simplifyapp.handlers.CustomerHandler;
 import com.mastercard.simplifyapp.objects.Customer;
 
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ public class CustomerFragment extends Fragment {
     FloatingActionButton addButton;
     ListView customerList;
     ArrayList<Customer> customers;
+    CustomerListAdapter adapter;
     public CustomerFragment() {
         // Required empty public constructor
     }
@@ -39,6 +43,7 @@ public class CustomerFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
+        final FloatingActionButton menu = (FloatingActionButton) getView().findViewById(R.id.add_item);
         addButton = (FloatingActionButton) getView().findViewById(R.id.add_item);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,6 +70,21 @@ public class CustomerFragment extends Fragment {
                 return true;
             }
         });
+        customerList.setOnScrollListener(new AbsListView.OnScrollListener(){
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_IDLE){
+                    menu.show(true);
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (visibleItemCount > totalItemCount && menu.isShown())
+                    menu.hide(true);
+            }
+        });
 
         populateCustomerList();
 
@@ -79,24 +99,40 @@ public class CustomerFragment extends Fragment {
     }
 
     private void populateCustomerList() {
-        customers = new ArrayList<>();
-        customers.add(new Customer("Firdaus Liborius"));
-        customers.add(new Customer("Cas Brendan"));
-        customers.add(new Customer("Hyginos Givi"));
-        customers.add(new Customer("Paderau Servaas"));
-        customers.add(new Customer("Haimo Dmitar"));
 
-        CustomerListAdapter adapter = new CustomerListAdapter(getActivity(), customers);
+        CustomerHandler handler = new CustomerHandler(getActivity().getBaseContext());
+        handler.open();
+        int length = handler.returnAmount();
+
+
+        if(length < 1)
+        {
+            handler.insertData("Cillian Mc Neill");
+            handler.insertData("Sarah Kingston");
+            handler.insertData("Mark Scully");
+            handler.insertData("Mary O'Brien");
+            handler.insertData("Rachel Byrne");
+        }
+
+        customers = new ArrayList<>();
+        Cursor c1 = handler.returnData();
+        if (c1.moveToFirst()) {
+            do {
+                customers.add(new Customer(c1.getString(1)));
+            }
+            while (c1.moveToNext());
+        }
+
+        handler.close();
+
+        adapter = new CustomerListAdapter(getActivity(), customers);
 
         customerList.setAdapter(adapter);
     }
 
     private void addItem() {
         customers.add(new Customer("New Name"));
-
-        CustomerListAdapter adapter = new CustomerListAdapter(getActivity(), customers);
-
-        customerList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
 }

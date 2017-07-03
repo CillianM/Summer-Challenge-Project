@@ -13,12 +13,14 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.mastercard.simplifyapp.PaymentActivity;
 import com.mastercard.simplifyapp.R;
 import com.mastercard.simplifyapp.adapters.StoreListAdapter;
@@ -40,6 +42,7 @@ import static com.mastercard.simplifyapp.utility.DbUtils.round;
 public class CheckoutFragment extends Fragment implements SearchView.OnQueryTextListener {
 
     ListView savedItems;
+    FloatingActionMenu menu;
     FloatingActionButton scanBarcode,takePicture,checkout;
     ArrayList<StoreItem> checkoutItems;
     ArrayList<StoreItem> storeItems;
@@ -67,7 +70,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-
+        menu = (FloatingActionMenu) getView().findViewById(R.id.menu);
         checkout = (FloatingActionButton) getView().findViewById(R.id.confirm_transaction);
         checkout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +97,21 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         });
         savedItems = (ListView) getView().findViewById(R.id.checkout_items);
         savedItems.setTextFilterEnabled(true);
+        savedItems.setOnScrollListener(new AbsListView.OnScrollListener(){
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_IDLE){
+                    menu.showMenu(true);
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (visibleItemCount > 0 && menu.isShown())
+                    menu.hideMenu(true);
+            }
+        });
 
         assert savedItems != null;
         savedItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {

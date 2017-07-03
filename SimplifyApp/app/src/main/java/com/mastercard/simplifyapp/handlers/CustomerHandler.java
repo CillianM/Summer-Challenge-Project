@@ -8,38 +8,45 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.Date;
+
 import static com.mastercard.simplifyapp.utility.DbUtils.generateUUID;
-import static com.mastercard.simplifyapp.utility.DbUtils.getCurrentEpochTime;
 
 
-public class TransactionHandler {
+public class CustomerHandler {
 
     //Database management variables
-    private static final String TABLE_NAME = "transactions";
-    private static final String DATA_BASE_NAME = "transaction_db";
+    private static final String TABLE_NAME = "customers";
+    private static final String DATA_BASE_NAME = "customer_db";
     private static final int DATABASE_VERSION = 1;
 
 
     //Database columns
     private static final String ID = "id"; //id for transaction
-    private static final String TRANSACTION_AMOUNT = "transaction_amount"; //total cost of transaction
-    private static final String CUSTOMER = "customer"; //person buying items
-    private static final String ITEMS = "items"; //items in transaction
-    private static final String TIME_SENT = "time_sent"; //time message was sent
+    private static final String NAME = "name"; //total cost of transaction
+    private static final String EMAIL = "email"; //total cost of transaction
+    private static final String PHONE = "phone"; //total cost of transaction
+    private static final String CARD_NUM = "num"; //total cost of transaction
+    private static final String CARD_CVV = "cvv"; //total cost of transaction
+    private static final String CARD_EXP = "exp"; //total cost of transaction
+    private static final String CREATED_DATE = "created_date"; //person buying items
 
 
     private static final String TABLE_CREATE = "create table " + TABLE_NAME +
             " (" + ID + " text not null, "
-            + TRANSACTION_AMOUNT +  " real not null,"
-            + CUSTOMER +  " text not null,"
-            + ITEMS +  " text not null,"
-            + TIME_SENT +  " text not null);";
+            + NAME +  " text not null,"
+            + EMAIL +  " text,"
+            + PHONE +  " text,"
+            + CARD_NUM +  " text,"
+            + CARD_CVV +  " text,"
+            + CARD_EXP +  " text,"
+            + CREATED_DATE +  " int not null);";
 
     private DataBaseHelper dbhelper;
     private Context ctx;
     private SQLiteDatabase db;
 
-    public TransactionHandler(Context ctx)
+    public CustomerHandler(Context ctx)
     {
         this.ctx = ctx;
         dbhelper = new DataBaseHelper(ctx);
@@ -75,7 +82,7 @@ public class TransactionHandler {
         }
     }
 
-    public TransactionHandler open()
+    public CustomerHandler open()
     {
         db = dbhelper.getWritableDatabase();
         return this;
@@ -86,18 +93,16 @@ public class TransactionHandler {
         dbhelper.close();
     }
 
-    public long insertData(double transactionAmount, String customer,String items)
+    public long insertData(String name)
     {
         ContentValues content = new ContentValues();
         content.put(ID,generateUUID().toString());
-        content.put(CUSTOMER,customer);
-        content.put(TRANSACTION_AMOUNT,transactionAmount);
-        content.put(ITEMS,items);
-        content.put(TIME_SENT,getCurrentEpochTime());
+        content.put(NAME,name);
+        content.put(CREATED_DATE, new Date().toString());
         return db.insert(TABLE_NAME,null,content);
     }
 
-    public void deleteTransaction(String id)
+    public void deleteCustomer(String id)
     {
         db.delete(TABLE_NAME, ID + " = ?", new String[] { id });
     }
@@ -109,8 +114,9 @@ public class TransactionHandler {
 
     public Cursor returnData()
     {
-        return db.query(TABLE_NAME, new String[]{ID, TRANSACTION_AMOUNT,CUSTOMER,ITEMS,TIME_SENT}, null, null, null, null, null);
+        return db.query(TABLE_NAME, new String[]{ID, NAME,EMAIL,PHONE,CARD_NUM,CARD_CVV,CARD_EXP,CREATED_DATE}, null, null, null, null, null);
     }
 
 
 }
+
