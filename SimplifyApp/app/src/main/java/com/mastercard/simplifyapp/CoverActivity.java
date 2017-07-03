@@ -3,21 +3,19 @@ package com.mastercard.simplifyapp;
 import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ImageView;
+
+import com.mastercard.simplifyapp.handlers.CustomerHandler;
+import com.mastercard.simplifyapp.handlers.StockHandler;
 
 public class CoverActivity extends AppCompatActivity {
 
@@ -75,19 +73,52 @@ public class CoverActivity extends AppCompatActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(this,R.color.colorPrimaryDark));
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
 
         //Wait the timeout then move on to home activity
         int timeOut = 3000;
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                populateStock();
+                populateCustomers();
                 Intent i = new Intent(CoverActivity.this, LoginActivity.class);
                 startActivity(i);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 finish();
             }
         }, timeOut);
+    }
+
+    void populateStock() {
+        StockHandler handler = new StockHandler(getApplicationContext());
+        handler.open();
+        int length = handler.returnAmount();
+        if (length < 1) {
+            handler.insertData("Coffee", "This is Item one", 2.99, 100);
+            handler.insertData("Tea", "This is Item two", 1.99, 100);
+            handler.insertData("Scone", "This is Item three", 1.99, 100);
+            handler.insertData("Muffin", "This is Item four", 1.99, 100);
+            handler.insertData("Cake Slice", "This is Item five", 3.99, 100);
+            handler.insertData("Orange Juice", "This is Item six", 2.00, 100);
+            handler.insertData("Bottled Water", "This is Item seven", 1.50, 100);
+            handler.insertData("Sandwich", "This is Item eight", 4.99, 100);
+        }
+    }
+
+    void populateCustomers() {
+        CustomerHandler handler = new CustomerHandler(getApplicationContext());
+        handler.open();
+        int length = handler.returnAmount();
+
+
+        if (length < 1) {
+            handler.insertData("Cillian Mc Neill");
+            handler.insertData("Sarah Kingston");
+            handler.insertData("Mark Scully");
+            handler.insertData("Mary O'Brien");
+            handler.insertData("Rachel Byrne");
+        }
     }
 
 }

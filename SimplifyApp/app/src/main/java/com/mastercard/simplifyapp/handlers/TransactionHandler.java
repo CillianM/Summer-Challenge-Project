@@ -25,6 +25,7 @@ public class TransactionHandler {
     private static final String TRANSACTION_AMOUNT = "transaction_amount"; //total cost of transaction
     private static final String CUSTOMER = "customer"; //person buying items
     private static final String ITEMS = "items"; //items in transaction
+    private static final String METHOD = "method"; //time message was sent
     private static final String TIME_SENT = "time_sent"; //time message was sent
 
 
@@ -33,6 +34,7 @@ public class TransactionHandler {
             + TRANSACTION_AMOUNT +  " real not null,"
             + CUSTOMER +  " text not null,"
             + ITEMS +  " text not null,"
+            + METHOD + " text not null,"
             + TIME_SENT +  " text not null);";
 
     private DataBaseHelper dbhelper;
@@ -86,13 +88,14 @@ public class TransactionHandler {
         dbhelper.close();
     }
 
-    public long insertData(double transactionAmount, String customer,String items)
+    public long insertData(double transactionAmount, String customer, String items, String method)
     {
         ContentValues content = new ContentValues();
         content.put(ID,generateUUID().toString());
         content.put(CUSTOMER,customer);
         content.put(TRANSACTION_AMOUNT,transactionAmount);
         content.put(ITEMS,items);
+        content.put(METHOD, method);
         content.put(TIME_SENT,getCurrentEpochTime());
         return db.insert(TABLE_NAME,null,content);
     }
@@ -109,7 +112,7 @@ public class TransactionHandler {
 
     public Cursor returnData()
     {
-        return db.query(TABLE_NAME, new String[]{ID, TRANSACTION_AMOUNT,CUSTOMER,ITEMS,TIME_SENT}, null, null, null, null, null);
+        return db.query(TABLE_NAME, new String[]{ID, TRANSACTION_AMOUNT, CUSTOMER, ITEMS, METHOD, TIME_SENT}, null, null, null, null, null);
     }
 
 

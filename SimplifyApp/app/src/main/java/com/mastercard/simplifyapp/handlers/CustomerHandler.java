@@ -8,6 +8,9 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.mastercard.simplifyapp.objects.Customer;
+import com.simplify.android.sdk.Card;
+
 import java.util.Date;
 
 import static com.mastercard.simplifyapp.utility.DbUtils.generateUUID;
@@ -50,6 +53,44 @@ public class CustomerHandler {
     {
         this.ctx = ctx;
         dbhelper = new DataBaseHelper(ctx);
+    }
+
+    public Customer getCustomer(String customerId) {
+        Customer customer = null;
+        Cursor c = db.query(TABLE_NAME, new String[]{NAME}
+                , ID + " LIKE ?", new String[]{customerId}, null, null, null);
+        while (c.moveToNext()) {
+            customer = new Customer(c.getString(0));
+        }
+        return customer;
+    }
+
+    public Card getCustomerCard(String customerId) {
+        Card card = null;
+        Cursor c = db.query(TABLE_NAME, new String[]{CARD_NUM, CARD_EXP, CARD_CVV}
+                , ID + " LIKE ?", new String[]{customerId}, null, null, null);
+        while (c.moveToNext()) {
+            if (c.getString(0) != null) {
+                card = new Card();
+                card.setNumber(c.getString(0));
+                card.setCvc(c.getString(2));
+                String exp = c.getString(1);
+                String month = exp.substring(0, exp.indexOf("/"));
+                String year = exp.substring(exp.indexOf("/") + 1);
+                card.setExpYear(year);
+                card.setExpMonth(month);
+            }
+        }
+        return card;
+    }
+
+    public void updateCustomerCard(String customerId, String cardNumber, String cvv, String expiry) {
+        ContentValues cv = new ContentValues();
+        cv.put(CARD_NUM, cardNumber);
+        cv.put(CARD_EXP, expiry);
+        cv.put(CARD_CVV, cvv);
+        String[] args = new String[]{customerId};
+        db.update(TABLE_NAME, cv, ID + "=?", args);
     }
 
     private static class DataBaseHelper extends SQLiteOpenHelper

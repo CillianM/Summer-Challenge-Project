@@ -10,12 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mastercard.simplifyapp.R;
+import com.mastercard.simplifyapp.handlers.CustomerHandler;
+import com.mastercard.simplifyapp.objects.Customer;
 import com.mastercard.simplifyapp.objects.Transaction;
 import com.mastercard.simplifyapp.utility.ColorGenerator;
 import com.mastercard.simplifyapp.utility.TextDrawable;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -64,14 +64,23 @@ public class TransactionListAdapter extends BaseAdapter {
         ImageView iconView = (ImageView) view.findViewById(R.id.icon);
         ColorGenerator generator = ColorGenerator.MATERIAL;
         int color = generator.getRandomColor();
+        String name = "Unknown";
+        if (!mNavItems.get(position).getCustomerId().equals("Unknown")) {
+            CustomerHandler handler = new CustomerHandler(parent.getContext());
+            handler.open();
+            Customer c = handler.getCustomer(mNavItems.get(position).getCustomerId());
+            if (c != null)
+                name = c.getName();
+            handler.close();
+        }
+
+
         TextDrawable drawable = TextDrawable.builder()
-                .buildRect(mNavItems.get(position).getCustomerName().toUpperCase().substring(0,1), Color.LTGRAY);
+                .buildRect(name.toUpperCase().substring(0, 1), Color.LTGRAY);
         iconView.setImageDrawable(drawable);
-        titleView.setText( mNavItems.get(position).getCustomerName() );
+        titleView.setText(name);
         priceView.setText("€" +  String.format("%.2f",mNavItems.get(position).getTransactionAmount()));
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        String reportDate = df.format(mNavItems.get(position).getDate());
-        dateView.setText(reportDate);
+        dateView.setText(mNavItems.get(position).getDate());
 
 
         return view;

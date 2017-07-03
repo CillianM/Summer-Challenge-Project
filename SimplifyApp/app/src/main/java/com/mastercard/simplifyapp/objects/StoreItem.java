@@ -19,6 +19,13 @@ public class StoreItem{
         this.price = price;
         this.quantity = 1;
     }
+
+    public StoreItem(String id, String name, double price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.quantity = 1;
+    }
     public StoreItem(String name, String description, double price, int quantity) {
         this.name = name;
         this.description = description;

@@ -8,10 +8,11 @@ import java.util.Date;
  */
 @SuppressWarnings("serial") //hide compiler warnings
 public class Transaction implements Serializable {
+    private String methodOfPay;
     private String id;
     private double transactionAmount;
-    private String customerName;
-    private Date date;
+    private String customerId;
+    private String date;
     private String items;
 
 
@@ -19,19 +20,21 @@ public class Transaction implements Serializable {
         super();
     }
 
-    public Transaction(String id, double transactionAmount,String customerName, String items) {
+    public Transaction(String id, double transactionAmount, String customerId, String items, String methodOfPay, String date) {
         this.id = id;
         this.transactionAmount = transactionAmount;
         this.items = items;
-        this.customerName = customerName;
-        this.date = new Date();
+        this.customerId = customerId;
+        this.date = date;
+        this.methodOfPay = methodOfPay;
     }
 
-    public Transaction(double transactionAmount, String customerName, String items) {
+    public Transaction(double transactionAmount, String customerId, String items, String methodOfPay) {
         this.transactionAmount = transactionAmount;
-        this.customerName =customerName;
+        this.customerId = customerId;
         this.items = items;
-        this.date = new Date();
+        this.date = new Date().toString();
+        this.methodOfPay = methodOfPay;
     }
 
     public String getId() {
@@ -50,11 +53,11 @@ public class Transaction implements Serializable {
         this.transactionAmount = transactionAmount;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -80,11 +83,19 @@ public class Transaction implements Serializable {
         return itemsString.substring(0,items.length -1);
     }
 
-    public String getCustomerName() {
-        return customerName;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+    public void setCustomerId(String customerName) {
+        this.customerId = customerName;
+    }
+
+    public String getMethodOfPay() {
+        return methodOfPay;
+    }
+
+    public void setMethodOfPay(String methodOfPay) {
+        this.methodOfPay = methodOfPay;
     }
 }

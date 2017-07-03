@@ -21,13 +21,15 @@ import com.mastercard.simplifyapp.objects.Transaction;
 
 import java.util.ArrayList;
 
+import static com.mastercard.simplifyapp.utility.DbUtils.epochToDate;
+
 /**
  * Created by e069278 on 26/06/2017.
  */
 
 public class TransactionsFragment extends Fragment {
     int MY_SCAN_REQUEST_CODE = 1;
-    ArrayList<Transaction> storeItems;
+    ArrayList<Transaction> transactions;
     ListView itemsList;
     private FloatingActionButton add, edit, count;
 
@@ -47,12 +49,12 @@ public class TransactionsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
         itemsList = (ListView) getView().findViewById(R.id.transaction_items);
-        assert storeItems != null;
+        assert transactions != null;
         itemsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), TransactionViewActivity.class);
-                intent.putExtra("transaction", storeItems.get(position));
+                intent.putExtra("transaction", transactions.get(position));
                 // Get the transition name from the string
                 String transitionName = "reveal";
 
@@ -86,36 +88,32 @@ public class TransactionsFragment extends Fragment {
     {
         TransactionHandler handler = new TransactionHandler(getActivity().getBaseContext());
         handler.open();
-        int length = handler.returnAmount();
+        if (handler.returnAmount() > 0) {
 
-
-        if(length < 1)
-        {
-            handler.insertData(2.99,"Sean","1,2,3");
-            handler.insertData(4.99,"Unknown","1,2,3");
-            handler.insertData(3.99,"Mary","1,2,3");
-            handler.insertData(2.00,"Unknown","1,2,3");
-        }
-
-        storeItems = new ArrayList<>();
-        Cursor c1 = handler.returnData();
-        if (c1.moveToFirst()) {
-            do {
-                storeItems.add(new Transaction(c1.getString(0),c1.getFloat(1),c1.getString(2),c1.getString(3)));
+            transactions = new ArrayList<>();
+            Cursor c1 = handler.returnData();
+            if (c1.moveToFirst()) {
+                do {
+                    transactions.add(new Transaction(c1.getString(0), c1.getFloat(1), c1.getString(2), c1.getString(3), c1.getString(4), epochToDate(Long.parseLong(c1.getString(5)))));
+                }
+                while (c1.moveToNext());
             }
-            while (c1.moveToNext());
+
+            handler.close();
+
+            TransactionListAdapter adapter = new TransactionListAdapter(getActivity(), transactions);
+
+            itemsList.setAdapter(adapter);
         }
-
-        handler.close();
-
-        TransactionListAdapter adapter = new TransactionListAdapter(getActivity(), storeItems);
-
-        itemsList.setAdapter(adapter);
     }
 
     private void removeItem(int index) {
-        storeItems.remove(index);
-        TransactionListAdapter adapter = new TransactionListAdapter(getActivity(), storeItems);
+        TransactionHandler handler = new TransactionHandler(getActivity().getBaseContext());
+        handler.open();
+        handler.deleteTransaction(transactions.get(index).getId());
+        handler.close();
+        transactions.remove(index);
+        TransactionListAdapter adapter = new TransactionListAdapter(getActivity(), transactions);
         itemsList.setAdapter(adapter);
     }
 }

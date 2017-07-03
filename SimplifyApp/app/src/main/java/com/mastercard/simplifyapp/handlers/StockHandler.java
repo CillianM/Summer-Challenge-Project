@@ -8,6 +8,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.mastercard.simplifyapp.objects.StoreItem;
+
 import static com.mastercard.simplifyapp.utility.DbUtils.generateUUID;
 
 
@@ -42,6 +44,16 @@ public class StockHandler {
     {
         this.ctx = ctx;
         dbhelper = new DataBaseHelper(ctx);
+    }
+
+    public StoreItem getStoreItem(String id) {
+        StoreItem item = null;
+        Cursor c = db.query(TABLE_NAME, new String[]{NAME, COST}
+                , ID + " LIKE ?", new String[]{id}, null, null, null);
+        while (c.moveToNext()) {
+            item = new StoreItem(id, c.getString(0), c.getFloat(1));
+        }
+        return item;
     }
 
     private static class DataBaseHelper extends SQLiteOpenHelper

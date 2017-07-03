@@ -32,7 +32,6 @@ import com.mastercard.simplifyapp.objects.UpdateData;
 
 import java.util.ArrayList;
 
-import static com.mastercard.simplifyapp.utility.DbUtils.generateUUID;
 import static com.mastercard.simplifyapp.utility.DbUtils.round;
 
 /**
@@ -43,16 +42,13 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
 
     ListView savedItems;
     FloatingActionMenu menu;
-    FloatingActionButton scanBarcode,takePicture,checkout;
+    FloatingActionButton scanBarcode, takePicture, checkout;
     ArrayList<StoreItem> checkoutItems;
     ArrayList<StoreItem> storeItems;
     double total;
     ViewPager mPager;
     ScreenSlidePagerAdapter mPagerAdapter;
     SearchView searchView;
-
-
-
 
 
     public CheckoutFragment() {
@@ -97,19 +93,20 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         });
         savedItems = (ListView) getView().findViewById(R.id.checkout_items);
         savedItems.setTextFilterEnabled(true);
-        savedItems.setOnScrollListener(new AbsListView.OnScrollListener(){
+        savedItems.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_IDLE){
+                if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+                    menu.hideMenu(true);
+                } else {
                     menu.showMenu(true);
                 }
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (visibleItemCount > 0 && menu.isShown())
-                    menu.hideMenu(true);
+
             }
         });
 
@@ -137,6 +134,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         mPagerAdapter.setParent(this);
         mPager.setAdapter(mPagerAdapter);
         populateStoreList();
+        menu.showMenu(true);
 
     }
 
@@ -144,10 +142,10 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         checkoutItems.add(storeItem);
         calculateTotal();
         mPagerAdapter.notifyDataSetChanged();
+        menu.showMenu(true);
     }
 
-    private void setupSearch()
-    {
+    private void setupSearch() {
         searchView.setIconifiedByDefault(true);
         searchView.setOnQueryTextListener(this);
         searchView.setSubmitButtonEnabled(true);
@@ -155,62 +153,43 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
     }
 
     private void commitTransaction() {
-        if(total > 0) {
+        if (total > 0) {
             Intent i = new Intent(this.getActivity(), PaymentActivity.class);
-            i.putExtra("transaction", new Transaction(total, "N/A", getCheckoutIds()));
+            i.putExtra("transaction", new Transaction(total, "N/A", getCheckoutIds(), "Unknown"));
             startActivity(i);
-        }
-        else
-        {
-            Toast.makeText(this.getActivity().getApplicationContext(),"Add something to the basket!",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this.getActivity().getApplicationContext(), "Add something to the basket!", Toast.LENGTH_SHORT).show();
         }
     }
 
     private String getCheckoutIds() {
         String items = "";
-        for(StoreItem item: checkoutItems)
-        {
+        for (StoreItem item : checkoutItems) {
             items += item.getId() + ",";
         }
-        return items.substring(0,items.length()-1);
+        return items.substring(0, items.length() - 1);
     }
 
 
     private void calculateTotal() {
         total = 0;
-        for(StoreItem item: checkoutItems)
-        {
+        for (StoreItem item : checkoutItems) {
             total += item.getPrice();
         }
 
-        total = round(total,2);
+        total = round(total, 2);
         mPagerAdapter.notifyDataSetChanged();
     }
 
-    void populateStoreList()
-    {
+    void populateStoreList() {
         StockHandler handler = new StockHandler(getActivity().getBaseContext());
         handler.open();
-        int length = handler.returnAmount();
-
-
-        if(length < 1)
-        {
-            handler.insertData("Coffee","This is Item one", 2.99,100);
-            handler.insertData("Tea","This is Item two", 1.99,100);
-            handler.insertData("Scone","This is Item three", 1.99,100);
-            handler.insertData("Muffin","This is Item four", 1.99,100);
-            handler.insertData("Cake Slice","This is Item five", 3.99,100);
-            handler.insertData("Orange Juice","This is Item six", 2.00,100);
-            handler.insertData("Bottled Water","This is Item seven", 1.50,100);
-            handler.insertData("Sandwich","This is Item eight", 4.99,100);
-        }
 
         storeItems = new ArrayList<>();
         Cursor c1 = handler.returnData();
         if (c1.moveToFirst()) {
             do {
-                storeItems.add(new StoreItem(c1.getString(0), c1.getString(1),c1.getString(2),c1.getFloat(3)));
+                storeItems.add(new StoreItem(c1.getString(0), c1.getString(1), c1.getString(2), c1.getFloat(3)));
             }
             while (c1.moveToNext());
         }
@@ -224,21 +203,10 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         mPagerAdapter.notifyDataSetChanged();
     }
 
-    public void addItem() {
-        storeItems.add(new StoreItem(generateUUID().toString(),"New Item","This is a new item that has been added", 1));
-        StoreListAdapter adapter = new StoreListAdapter(getActivity(), storeItems);
-        checkoutItems = new ArrayList<>(storeItems);
-        savedItems.setAdapter(adapter);
-        calculateTotal();
-        mPagerAdapter.notifyDataSetChanged();
-    }
 
-
-    private ArrayList<String> toStringArray(ArrayList<StoreItem> items)
-    {
+    private ArrayList<String> toStringArray(ArrayList<StoreItem> items) {
         ArrayList<String> strings = new ArrayList<>();
-        for(StoreItem item: items)
-        {
+        for (StoreItem item : items) {
             strings.add(item.getName());
         }
         return strings;
@@ -246,8 +214,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
 
     public void notifyChildren(ArrayList<StoreItem> items) {
         total = 0;
-        for(StoreItem item: items)
-        {
+        for (StoreItem item : items) {
             total += item.getPrice();
         }
 
@@ -261,12 +228,9 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if(TextUtils.isEmpty(newText))
-        {
+        if (TextUtils.isEmpty(newText)) {
             savedItems.clearTextFilter();
-        }
-        else
-        {
+        } else {
             savedItems.setFilterText(newText);
         }
         return true;
@@ -276,11 +240,12 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 
         CheckoutFragment parent;
+
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
-        public void setParent(CheckoutFragment parent){
+        public void setParent(CheckoutFragment parent) {
             this.parent = parent;
         }
 
@@ -288,15 +253,14 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         public Fragment getItem(int position) {
             Fragment fragment;
 
-            if(position == 0) {
+            if (position == 0) {
                 fragment = new CheckoutTotalFragment();
 
                 Bundle args = new Bundle();
                 args.putDouble("total", total);
                 fragment.setArguments(args);
                 return fragment;
-            }
-            else {
+            } else {
                 fragment = new CheckoutBasketFragment();
                 ((CheckoutBasketFragment) fragment).setParent(parent);
                 Bundle args = new Bundle();
@@ -307,10 +271,9 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         }
 
         @Override
-        public int getItemPosition(Object object)
-        {
-            UpdateData updateData = new UpdateData(checkoutItems,total);
-            if(object instanceof UpdateableFragment)
+        public int getItemPosition(Object object) {
+            UpdateData updateData = new UpdateData(checkoutItems, total);
+            if (object instanceof UpdateableFragment)
                 ((UpdateableFragment) object).update(updateData);
             //return POSITION_NONE;
             return super.getItemPosition(object);

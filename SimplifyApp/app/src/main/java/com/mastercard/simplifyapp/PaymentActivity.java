@@ -1,8 +1,10 @@
 package com.mastercard.simplifyapp;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.nfc.NfcAdapter;
@@ -14,7 +16,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -26,13 +31,20 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.mastercard.mpqr.pushpayment.model.AdditionalData;
 import com.mastercard.mpqr.pushpayment.model.PushPaymentData;
+import com.mastercard.simplifyapp.adapters.CustomerListAdapter;
+import com.mastercard.simplifyapp.handlers.CustomerHandler;
+import com.mastercard.simplifyapp.handlers.TransactionHandler;
 import com.mastercard.simplifyapp.interfaces.OnTaskCompleted;
+import com.mastercard.simplifyapp.objects.Customer;
 import com.mastercard.simplifyapp.objects.Transaction;
 import com.pro100svitlo.creditCardNfcReader.CardNfcAsyncTask;
 import com.pro100svitlo.creditCardNfcReader.utils.CardNfcUtils;
 import com.simplify.android.sdk.Card;
 import com.simplify.android.sdk.CardToken;
 import com.simplify.android.sdk.Simplify;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 public class PaymentActivity extends AppCompatActivity implements OnTaskCompleted,CardNfcAsyncTask.CardNfcInterface {
 
@@ -47,18 +59,24 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
     CardNfcAsyncTask mCardNfcAsyncTask;
     boolean mIntentFromCreate;
     Transaction currentTransaction;
+    Button customerButton;
+    String customerPurchasing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
-        simplify = new Simplify();
-        simplify.setApiKey("sbpb_NGY0ZTFmODctZmZjNi00YmFiLThjZjktZTBiMGNhNmVhMjI2");
 
-
+        customerPurchasing = "Unknown";
         Intent intent = getIntent();
         currentTransaction = (Transaction)intent.getSerializableExtra("transaction");
-
+        customerButton = (Button) findViewById(R.id.customer_button);
+        customerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addCustomer();
+            }
+        });
         cardForm = (CardForm) findViewById(R.id.card_form);
         cardForm.cardRequired(true)
                 .expirationRequired(true)
@@ -116,6 +134,58 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
         });
     }
 
+    private void addCustomer() {
+        final Dialog dialog = new Dialog(PaymentActivity.this);
+        dialog.setContentView(R.layout.dialog_choose_customer);
+        dialog.setTitle("Title...");
+
+        ListView customerList = (ListView) dialog.findViewById(R.id.customer_list_dialog);
+        final ArrayList<Customer> customers = getCustomerList();
+        CustomerListAdapter adapter = new CustomerListAdapter(getApplicationContext(), customers);
+        customerList.setAdapter(adapter);
+
+        customerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                customerPurchasing = customers.get(position).getId();
+                getCustomerCard(customers.get(position).getId());
+                customerButton.setText(customers.get(position).getName());
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void getCustomerCard(String id) {
+        CustomerHandler handler = new CustomerHandler(getApplicationContext());
+        handler.open();
+        Card card = handler.getCustomerCard(id);
+        handler.close();
+        if (card != null) {
+            cardForm.getCardEditText().setText(card.getNumber());
+            cardForm.getExpirationDateEditText().setText(card.getExpMonth() + card.getExpYear());
+            cardForm.getCvvEditText().setText(card.getCvc());
+        }
+    }
+
+    private ArrayList<Customer> getCustomerList() {
+        ArrayList<Customer> customers = new ArrayList<>();
+        CustomerHandler handler = new CustomerHandler(getApplicationContext());
+        handler.open();
+        Cursor c = handler.returnData();
+        while (c.moveToNext()) {
+            Customer customer = new Customer(c.getString(1));
+            customer.setId(c.getString(0));
+            customers.add(customer);
+
+        }
+        handler.close();
+
+        return customers;
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -135,7 +205,18 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
+                                currentTransaction.setDate(new Date().toString());
+
+                                currentTransaction.setCustomerId(customerPurchasing);
+                                currentTransaction.setMethodOfPay("Cash");
+                                TransactionHandler handler = new TransactionHandler(getApplicationContext());
+                                handler.open();
+                                handler.insertData(currentTransaction.getTransactionAmount(), currentTransaction.getCustomerId(), currentTransaction.getItems(), currentTransaction.getMethodOfPay());
+                                handler.close();
                                 Toast.makeText(getApplicationContext(),"Transaction Saved",Toast.LENGTH_SHORT).show();
+
+
+                                Toast.makeText(getApplicationContext(), "Transaction Saved", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(currentActivity,StoreActivity.class);
                                 startActivity(intent);
                                 finish();
@@ -235,24 +316,34 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
 
     void verifyTransaction() {
 
-        Card card = new Card();
-        card.setCvc(cardForm.getCvv());
-        card.setNumber(cardForm.getCardNumber());
-        card.setExpMonth(cardForm.getExpirationMonth());
-        card.setExpYear(cardForm.getExpirationYear());
-        card.setAddressZip(cardForm.getCountryCode());
+        cardForm.validate();
+        if (cardForm.isValid()) {
+            Card card = new Card();
+            card.setCvc(cardForm.getCvv());
+            card.setNumber(cardForm.getCardNumber());
+            card.setExpMonth(cardForm.getExpirationMonth());
+            card.setExpYear(cardForm.getExpirationYear());
+            card.setAddressZip(cardForm.getCountryCode());
 
-        // tokenize the card
-        simplify.createCardToken(card, new CardToken.Callback() {
-            @Override
-            public void onSuccess(CardToken cardToken) {
-               token = cardToken;
+            if (!customerPurchasing.equals("Unknown")) {
+                CustomerHandler handler = new CustomerHandler(getApplicationContext());
+                handler.open();
+                handler.updateCustomerCard(customerPurchasing, cardForm.getCardNumber(), cardForm.getCvv(), cardForm.getExpirationMonth() + "/" + cardForm.getExpirationYear());
+                handler.close();
             }
-            @Override
-            public void onError(Throwable throwable) {
-                // ...
-            }
-        });
+
+            currentTransaction.setDate(new Date().toString());
+            currentTransaction.setCustomerId(customerPurchasing);
+            currentTransaction.setMethodOfPay("Card");
+            TransactionHandler handler = new TransactionHandler(getApplicationContext());
+            handler.open();
+            handler.insertData(currentTransaction.getTransactionAmount(), currentTransaction.getCustomerId(), currentTransaction.getItems(), currentTransaction.getMethodOfPay());
+            handler.close();
+            Toast.makeText(getApplicationContext(), "Transaction Saved", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, StoreActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     @Override

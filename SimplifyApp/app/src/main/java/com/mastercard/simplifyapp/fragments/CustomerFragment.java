@@ -1,5 +1,6 @@
 package com.mastercard.simplifyapp.fragments;
 
+import android.app.Dialog;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -74,15 +77,15 @@ public class CustomerFragment extends Fragment {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_IDLE){
+                if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+                    menu.hide(true);
+                } else {
                     menu.show(true);
                 }
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (visibleItemCount > totalItemCount && menu.isShown())
-                    menu.hide(true);
             }
         });
 
@@ -91,34 +94,26 @@ public class CustomerFragment extends Fragment {
     }
 
     private void removeItem(int position) {
+        CustomerHandler handler = new CustomerHandler(getActivity().getApplicationContext());
+        handler.open();
+        handler.deleteCustomer(customers.get(position).getId());
+        handler.close();
         customers.remove(position);
-
-        CustomerListAdapter adapter = new CustomerListAdapter(getActivity(), customers);
-
-        customerList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     private void populateCustomerList() {
 
         CustomerHandler handler = new CustomerHandler(getActivity().getBaseContext());
         handler.open();
-        int length = handler.returnAmount();
-
-
-        if(length < 1)
-        {
-            handler.insertData("Cillian Mc Neill");
-            handler.insertData("Sarah Kingston");
-            handler.insertData("Mark Scully");
-            handler.insertData("Mary O'Brien");
-            handler.insertData("Rachel Byrne");
-        }
 
         customers = new ArrayList<>();
         Cursor c1 = handler.returnData();
         if (c1.moveToFirst()) {
             do {
-                customers.add(new Customer(c1.getString(1)));
+                Customer c = new Customer(c1.getString(1));
+                c.setId(c1.getString(0));
+                customers.add(c);
             }
             while (c1.moveToNext());
         }
@@ -131,8 +126,32 @@ public class CustomerFragment extends Fragment {
     }
 
     private void addItem() {
-        customers.add(new Customer("New Name"));
-        adapter.notifyDataSetChanged();
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.setContentView(R.layout.dialog_add_customer);
+        dialog.setTitle("Title...");
+
+        final EditText name = (EditText) dialog.findViewById(R.id.name);
+
+        Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
+        // if button is clicked, close the custom dialog
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nameText = name.getText().toString();
+                CustomerHandler handler = new CustomerHandler(getActivity().getApplicationContext());
+                handler.open();
+                handler.insertData(nameText);
+                handler.close();
+                customers.add(new Customer(nameText));
+                adapter.notifyDataSetChanged();
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+
+
     }
 
 }

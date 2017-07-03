@@ -112,15 +112,15 @@ public class StockFragment extends Fragment{
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_IDLE){
+                if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
+                    menu.hideMenu(true);
+                } else {
                     menu.showMenu(true);
                 }
             }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if (visibleItemCount > totalItemCount && menu.isShown())
-                    menu.hideMenu(true);
             }
         });
 
@@ -132,20 +132,6 @@ public class StockFragment extends Fragment{
     {
         StockHandler handler = new StockHandler(getActivity().getBaseContext());
         handler.open();
-        int length = handler.returnAmount();
-
-
-        if(length < 1)
-        {
-            handler.insertData("Coffee","This is Item one", 2.99,100);
-            handler.insertData("Tea","This is Item two", 1.99,100);
-            handler.insertData("Scone","This is Item three", 1.99,100);
-            handler.insertData("Muffin","This is Item four", 1.99,100);
-            handler.insertData("Cake Slice","This is Item five", 3.99,100);
-            handler.insertData("Orange Juice","This is Item six", 2.00,100);
-            handler.insertData("Bottled Water","This is Item seven", 1.50,100);
-            handler.insertData("Sandwich","This is Item eight", 4.99,100);
-        }
 
         storeItems = new ArrayList<>();
         Cursor c1 = handler.returnData();
@@ -164,8 +150,8 @@ public class StockFragment extends Fragment{
     }
 
     public void addItem() {
-//        storeItems.add(new StoreItem(generateUUID().toString(),"New Item","This is a new item that has been added", 1));
-//        StoreListAdapter adapter = new StoreListAdapter(getActivity(), storeItems);
+//        transactions.add(new StoreItem(generateUUID().toString(),"New Item","This is a new item that has been added", 1));
+//        StoreListAdapter adapter = new StoreListAdapter(getActivity(), transactions);
 //        itemsList.setAdapter(adapter);
         // custom dialog
         final Dialog dialog = new Dialog(getActivity());
