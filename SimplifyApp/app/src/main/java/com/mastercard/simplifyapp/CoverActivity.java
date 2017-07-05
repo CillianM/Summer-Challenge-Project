@@ -14,6 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+import com.mastercard.simplifyapp.handlers.CategoryHandler;
 import com.mastercard.simplifyapp.handlers.CustomerHandler;
 import com.mastercard.simplifyapp.handlers.StockHandler;
 
@@ -80,6 +81,7 @@ public class CoverActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                populateCategory();
                 populateStock();
                 populateCustomers();
                 Intent i = new Intent(CoverActivity.this, LoginActivity.class);
@@ -90,19 +92,41 @@ public class CoverActivity extends AppCompatActivity {
         }, timeOut);
     }
 
+    void populateCategory() {
+        CategoryHandler handler = new CategoryHandler(getApplicationContext());
+        handler.open();
+        int length = handler.returnAmount();
+        if (length < 1) {
+            handler.insertData("1", "Fruit");
+            handler.insertData("2", "Baked Goods");
+            handler.insertData("3", "Sweets");
+            handler.insertData("4", "Cold Drinks");
+            handler.insertData("5", "Hot Drinks");
+            handler.insertData("6", "Misc");
+        }
+        handler.close();
+    }
+
     void populateStock() {
         StockHandler handler = new StockHandler(getApplicationContext());
         handler.open();
         int length = handler.returnAmount();
         if (length < 1) {
-            handler.insertData("Coffee", "This is Item one", 2.99, 100);
-            handler.insertData("Tea", "This is Item two", 1.99, 100);
-            handler.insertData("Scone", "This is Item three", 1.99, 100);
-            handler.insertData("Muffin", "This is Item four", 1.99, 100);
-            handler.insertData("Cake Slice", "This is Item five", 3.99, 100);
-            handler.insertData("Orange Juice", "This is Item six", 2.00, 100);
-            handler.insertData("Bottled Water", "This is Item seven", 1.50, 100);
-            handler.insertData("Sandwich", "This is Item eight", 4.99, 100);
+            handler.insertData("5", "Coffee", "Plain Coffee", 1.49, 100);
+            handler.insertData("5", "Tea", "Plain Tea", 1.49, 100);
+            handler.insertData("4", "Coca Cola", "Original Coca cola", 1.49, 100);
+            handler.insertData("4", "Fanta", "Orange Fanta", 1.49, 100);
+            handler.insertData("4", "Diet Coke", "Diet version of coca cola", 1.49, 100);
+            handler.insertData("3", "Choclate Bar", "Cadbury", 1.29, 100);
+            handler.insertData("3", "Crisps", "King Crisps", 0.99, 100);
+            handler.insertData("2", "Muffin", "Chocolate muffin", 1.99, 100);
+            handler.insertData("2", "Scone", "Plain scone", 1.99, 100);
+            handler.insertData("2", "Cake Slice", "Cheesecake", 1.99, 100);
+            handler.insertData("1", "Apple", "Granny smith", 0.89, 100);
+            handler.insertData("1", "Orange", "Simple orange", 0.89, 100);
+            handler.insertData("1", "Banana", "Simple banana", 0.89, 100);
+            handler.insertData("4", "Bottled Water", "Plain bottled water", 1.50, 100);
+            handler.insertData("6", "Sandwich", "Ham", 4.99, 100);
         }
     }
 

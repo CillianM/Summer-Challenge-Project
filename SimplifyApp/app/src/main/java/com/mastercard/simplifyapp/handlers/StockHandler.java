@@ -23,6 +23,7 @@ public class StockHandler {
 
     //Database columns
     private static final String ID = "id"; //id for transaction
+    private static final String CATEGORY_ID = "category_id"; //id for transaction
     private static final String NAME = "name"; //total cost of transaction
     private static final String DESCRIPTION = "description"; //person buying items
     private static final String QUANTITY = "quantity"; //items in transaction
@@ -31,6 +32,7 @@ public class StockHandler {
 
     private static final String TABLE_CREATE = "create table " + TABLE_NAME +
             " (" + ID + " text not null, "
+            + CATEGORY_ID + " text not null,"
             + NAME +  " text not null,"
             + DESCRIPTION +  " text not null,"
             + COST +  " real not null,"
@@ -97,10 +99,11 @@ public class StockHandler {
         dbhelper.close();
     }
 
-    public long insertData(String name, String description,double price,int quantity)
+    public long insertData(String categoryId, String name, String description, double price, int quantity)
     {
         ContentValues content = new ContentValues();
         content.put(ID,generateUUID().toString());
+        content.put(CATEGORY_ID, categoryId);
         content.put(NAME,name);
         content.put(DESCRIPTION,description);
         content.put(COST,price);
@@ -120,7 +123,11 @@ public class StockHandler {
 
     public Cursor returnData()
     {
-        return db.query(TABLE_NAME, new String[]{ID, NAME,DESCRIPTION,COST,QUANTITY}, null, null, null, null, null);
+        return db.query(TABLE_NAME, new String[]{ID, CATEGORY_ID, NAME, DESCRIPTION, COST, QUANTITY}, null, null, null, null, null);
+    }
+
+    public Cursor returnCategoryGroup(String categoryId) {
+        return db.query(TABLE_NAME, new String[]{ID, CATEGORY_ID, NAME, DESCRIPTION, COST, QUANTITY}, CATEGORY_ID + "=?", new String[]{categoryId}, null, null, null, null);
     }
 
 

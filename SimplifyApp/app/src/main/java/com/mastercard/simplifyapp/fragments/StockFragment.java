@@ -1,11 +1,9 @@
 package com.mastercard.simplifyapp.fragments;
 
 import android.app.Dialog;
-import android.content.Intent;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,16 +12,17 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.mastercard.simplifyapp.ItemViewActivity;
 import com.mastercard.simplifyapp.R;
-import com.mastercard.simplifyapp.adapters.StoreListAdapter;
+import com.mastercard.simplifyapp.adapters.CategoryListAdapter;
+import com.mastercard.simplifyapp.handlers.CategoryHandler;
 import com.mastercard.simplifyapp.handlers.StockHandler;
+import com.mastercard.simplifyapp.objects.ItemCategory;
 import com.mastercard.simplifyapp.objects.StoreItem;
 
 import java.util.ArrayList;
@@ -36,10 +35,11 @@ public class StockFragment extends Fragment{
 
     int MY_SCAN_REQUEST_CODE = 1;
     ArrayList<StoreItem> storeItems;
-    ListView itemsList;
+    ArrayList<ItemCategory> groupItems;
+    ExpandableListView itemsList;
     private FloatingActionButton add,edit,count;
     EditText name,description,price,quantity;
-    StoreListAdapter adapter;
+    CategoryListAdapter adapter;
 
     public StockFragment() {
         // Required empty public constructor
@@ -72,28 +72,12 @@ public class StockFragment extends Fragment{
             }
 
         });
-        itemsList = (ListView) getView().findViewById(R.id.checkout_items);
+        itemsList = (ExpandableListView) getView().findViewById(R.id.checkout_items);
         assert storeItems != null;
         itemsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), ItemViewActivity.class);
-                intent.putExtra("name", storeItems.get(position).getName());
-                intent.putExtra("description", storeItems.get(position).getDescription());
-                intent.putExtra("price", storeItems.get(position).getPrice());
-                intent.putExtra("quantity", storeItems.get(position).getQuantity());
-                intent.putExtra("image", R.drawable.stock_icon);
-                // Get the transition name from the string
-                String transitionName = "reveal";
 
-                ActivityOptionsCompat options =
-
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                                view,   // Starting view
-                                transitionName    // The String
-                        );
-
-                ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
             }
 
@@ -130,6 +114,18 @@ public class StockFragment extends Fragment{
 
     void populateStoreList()
     {
+        CategoryHandler categoryHandler = new CategoryHandler(getActivity().getBaseContext());
+        categoryHandler.open();
+
+        groupItems = new ArrayList<>();
+        Cursor c = categoryHandler.returnData();
+        if (c.moveToFirst()) {
+            do {
+                groupItems.add(new ItemCategory(c.getString(0), c.getString(1)));
+            }
+            while (c.moveToNext());
+        }
+
         StockHandler handler = new StockHandler(getActivity().getBaseContext());
         handler.open();
 
@@ -137,16 +133,29 @@ public class StockFragment extends Fragment{
         Cursor c1 = handler.returnData();
         if (c1.moveToFirst()) {
             do {
-                storeItems.add(new StoreItem(c1.getString(0),c1.getString(1),c1.getString(2),c1.getFloat(3)));
+                storeItems.add(new StoreItem(c1.getString(0), c1.getString(1), c1.getString(2), c1.getString(3), c1.getFloat(4)));
             }
             while (c1.moveToNext());
         }
-
         handler.close();
 
-        adapter = new StoreListAdapter(getActivity(), storeItems);
+        setGroups();
 
+        adapter = new CategoryListAdapter(groupItems);
+        adapter.setInflater((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE), getActivity());
         itemsList.setAdapter(adapter);
+    }
+
+    private void setGroups() {
+        for (ItemCategory cat : groupItems) {
+            ArrayList<StoreItem> itemList = new ArrayList<>();
+            for (StoreItem item : storeItems) {
+                if (item.getCategoryId().matches(cat.getId())) {
+                    itemList.add(item);
+                }
+            }
+            cat.setItems(itemList);
+        }
     }
 
     public void addItem() {
@@ -179,7 +188,7 @@ public class StockFragment extends Fragment{
 
                     StockHandler handler = new StockHandler(getActivity().getBaseContext());
                     handler.open();
-                    handler.insertData(nameText,descriptionText,priceNum,quantitiyNum);
+                    handler.insertData("6", nameText, descriptionText, priceNum, quantitiyNum);
                     handler.close();
                     Toast.makeText(getActivity().getApplicationContext(),"Item saved",Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
@@ -199,11 +208,6 @@ public class StockFragment extends Fragment{
 
 
     private void removeItem(int index) {
-        StockHandler handler = new StockHandler(getActivity().getBaseContext());
-        handler.open();
-        handler.deleteStock(storeItems.get(index).getName());
-        handler.close();
-        storeItems.remove(index);
-        adapter.notifyDataSetChanged();
+
     }
 }

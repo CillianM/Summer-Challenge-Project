@@ -189,7 +189,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         Cursor c1 = handler.returnData();
         if (c1.moveToFirst()) {
             do {
-                storeItems.add(new StoreItem(c1.getString(0), c1.getString(1), c1.getString(2), c1.getFloat(3)));
+                storeItems.add(new StoreItem(c1.getString(0), c1.getString(1), c1.getString(2), c1.getString(3), c1.getFloat(4)));
             }
             while (c1.moveToNext());
         }

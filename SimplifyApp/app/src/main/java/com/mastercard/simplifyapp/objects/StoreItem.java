@@ -10,10 +10,12 @@ public class StoreItem{
     private String description;
     private double price;
     private int quantity;
+    private String categoryId;
 
 
-    public StoreItem(String id, String name, String description, double price) {
+    public StoreItem(String id, String categoryId, String name, String description, double price) {
         this.id = id;
+        this.categoryId = categoryId;
         this.name = name;
         this.description = description;
         this.price = price;
@@ -79,5 +81,13 @@ public class StoreItem{
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 }
