@@ -20,4 +20,5 @@
     <color name="success_color">#009688</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="red">#d62626</color>
+    <color name="darkOrange">#ce5300</color>
 </resources>

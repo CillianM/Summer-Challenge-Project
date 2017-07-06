@@ -30,6 +30,7 @@ public class CategoryListAdapter extends BaseExpandableListAdapter {
     public LayoutInflater minflater;
     public Activity activity;
 
+
     public CategoryListAdapter(ArrayList<ItemCategory> categories) {
         this.categories = categories;
     }
@@ -83,11 +84,7 @@ public class CategoryListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, ItemViewActivity.class);
-                intent.putExtra("name", items.get(childPosition).getName());
-                intent.putExtra("description", items.get(childPosition).getDescription());
-                intent.putExtra("price", items.get(childPosition).getPrice());
-                intent.putExtra("quantity", items.get(childPosition).getQuantity());
-                intent.putExtra("image", R.drawable.stock_icon);
+                intent.putExtra("id", items.get(childPosition).getId());
                 // Get the transition name from the string
                 String transitionName = "reveal";
 
@@ -140,8 +137,13 @@ public class CategoryListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             convertView = minflater.inflate(R.layout.category_item, null);
         }
+        String name = categories.get(groupPosition).getName();
+
         TextView titleView = (TextView) convertView.findViewById(R.id.title);
-        titleView.setText(categories.get(groupPosition).getName());
+        TextView countView = (TextView) convertView.findViewById(R.id.item_count);
+        String count = categories.get(groupPosition).getItems().size() + " Items";
+        countView.setText(count);
+        titleView.setText(name);
         return convertView;
     }
 

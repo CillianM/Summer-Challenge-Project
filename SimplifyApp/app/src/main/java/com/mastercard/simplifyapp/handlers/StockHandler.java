@@ -50,10 +50,11 @@ public class StockHandler {
 
     public StoreItem getStoreItem(String id) {
         StoreItem item = null;
-        Cursor c = db.query(TABLE_NAME, new String[]{NAME, COST}
+        Cursor c = db.query(TABLE_NAME, new String[]{CATEGORY_ID, NAME, DESCRIPTION, COST, QUANTITY}
                 , ID + " LIKE ?", new String[]{id}, null, null, null);
         while (c.moveToNext()) {
-            item = new StoreItem(id, c.getString(0), c.getFloat(1));
+            item = new StoreItem(id, c.getString(0), c.getString(1), c.getString(2), c.getFloat(3));
+            item.setQuantity(c.getInt(4));
         }
         return item;
     }

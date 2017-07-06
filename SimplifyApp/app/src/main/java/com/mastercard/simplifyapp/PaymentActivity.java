@@ -40,8 +40,6 @@ import com.mastercard.simplifyapp.objects.Transaction;
 import com.pro100svitlo.creditCardNfcReader.CardNfcAsyncTask;
 import com.pro100svitlo.creditCardNfcReader.utils.CardNfcUtils;
 import com.simplify.android.sdk.Card;
-import com.simplify.android.sdk.CardToken;
-import com.simplify.android.sdk.Simplify;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,8 +50,6 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
     BitmapCreator creator;
     String qrContent;
     CardForm cardForm;
-    Simplify simplify;
-    CardToken token;
     NfcAdapter mNfcAdapter;
     CardNfcUtils mCardNfcUtils;
     CardNfcAsyncTask mCardNfcAsyncTask;
@@ -66,6 +62,8 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         customerPurchasing = "Unknown";
         Intent intent = getIntent();
@@ -132,6 +130,12 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
                 verifyTransaction();
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     private void addCustomer() {

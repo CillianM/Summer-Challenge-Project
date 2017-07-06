@@ -24,6 +24,8 @@ public class TransactionViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_view);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Transaction transaction = (Transaction) getIntent().getSerializableExtra("transaction");
 
         Customer c = new Customer("Unknown");
@@ -52,6 +54,12 @@ public class TransactionViewActivity extends AppCompatActivity {
         ArrayList<StoreItem> items = getItems(transaction.getItems());
         StoreListAdapter adapter = new StoreListAdapter(getApplicationContext(), items);
         listView.setAdapter(adapter);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     private ArrayList<StoreItem> getItems(String items) {
