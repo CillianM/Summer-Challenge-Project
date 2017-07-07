@@ -8,7 +8,7 @@
         android:layout_weight="0.5"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/material_blue_grey_800"
+        android:background="@color/colorAccent"
         android:padding="8dp" >
 
         <com.mastercard.simplifyapp.view.RoundedImageView

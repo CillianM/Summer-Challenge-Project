@@ -117,7 +117,7 @@ public class CoverActivity extends AppCompatActivity {
             handler.insertData("4", "Coca Cola", "Original Coca cola", 1.49, 100);
             handler.insertData("4", "Fanta", "Orange Fanta", 1.49, 100);
             handler.insertData("4", "Diet Coke", "Diet version of coca cola", 1.49, 100);
-            handler.insertData("3", "Choclate Bar", "Cadbury", 1.29, 100);
+            handler.insertData("3", "Chocolate Bar", "Cadbury", 1.29, 100);
             handler.insertData("3", "Crisps", "King Crisps", 0.99, 100);
             handler.insertData("2", "Muffin", "Chocolate muffin", 1.99, 100);
             handler.insertData("2", "Scone", "Plain scone", 1.99, 100);
@@ -126,7 +126,7 @@ public class CoverActivity extends AppCompatActivity {
             handler.insertData("1", "Orange", "Simple orange", 0.89, 100);
             handler.insertData("1", "Banana", "Simple banana", 0.89, 100);
             handler.insertData("4", "Bottled Water", "Plain bottled water", 1.50, 100);
-            handler.insertData("6", "Sandwich", "Ham", 4.99, 100);
+            handler.insertData("6", "Lotto Ticket", "Ticket for this weeks lotto", 4.99, 100);
         }
     }
 

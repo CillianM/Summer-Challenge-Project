@@ -43,7 +43,9 @@
         <activity
             android:name=".ConfirmDetailsActivity"
             android:label="Confirm User Details" />
-        <activity android:name=".ItemViewActivity" />
+        <activity
+            android:name=".ItemViewActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".UserConfigActivity"
             android:label="User Settings"

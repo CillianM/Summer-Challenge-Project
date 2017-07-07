@@ -133,6 +133,11 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
     }
 
     @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
     public boolean onSupportNavigateUp() {
         finish();
         return true;
@@ -202,6 +207,9 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent sendIntent;
         switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
             case R.id.action_cash:
                 final Activity currentActivity = this;
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {

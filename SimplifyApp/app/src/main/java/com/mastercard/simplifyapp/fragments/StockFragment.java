@@ -144,6 +144,8 @@ public class StockFragment extends Fragment{
         adapter = new CategoryListAdapter(groupItems);
         adapter.setInflater((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE), getActivity());
         itemsList.setAdapter(adapter);
+        for (int i = 0; i < adapter.getGroupCount(); i++)
+            itemsList.expandGroup(i);
     }
 
     private void setGroups() {

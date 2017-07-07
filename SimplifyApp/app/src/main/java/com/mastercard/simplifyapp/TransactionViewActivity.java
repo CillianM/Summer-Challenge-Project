@@ -58,7 +58,7 @@ public class TransactionViewActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        finish();
+        ActivityCompat.finishAfterTransition(this);
         return true;
     }
 
