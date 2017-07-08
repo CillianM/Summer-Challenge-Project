@@ -30,12 +30,12 @@
         android:inputType="numberDecimal"
         android:hint="Price"/>
 
-    <EditText
-        android:id="@+id/quantity"
+    <Spinner
+        android:id="@+id/category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:hint="Quantity"/>
+        android:hint="Category" />
 
     <Button
         android:id="@+id/dialogButtonOK"

@@ -5,14 +5,18 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +30,7 @@ import com.mastercard.simplifyapp.objects.ItemCategory;
 import com.mastercard.simplifyapp.objects.StoreItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by e069278 on 23/05/2017.
@@ -38,7 +43,8 @@ public class StockFragment extends Fragment{
     ArrayList<ItemCategory> groupItems;
     ExpandableListView itemsList;
     private FloatingActionButton add,edit,count;
-    EditText name,description,price,quantity;
+    EditText name, description, price;
+    Spinner category;
     CategoryListAdapter adapter;
 
     public StockFragment() {
@@ -126,6 +132,8 @@ public class StockFragment extends Fragment{
             while (c.moveToNext());
         }
 
+        categoryHandler.close();
+
         StockHandler handler = new StockHandler(getActivity().getBaseContext());
         handler.open();
 
@@ -174,7 +182,17 @@ public class StockFragment extends Fragment{
         name = (EditText) dialog.findViewById(R.id.name);
         description = (EditText) dialog.findViewById(R.id.description);
         price = (EditText) dialog.findViewById(R.id.price);
-        quantity = (EditText) dialog.findViewById(R.id.quantity);
+        category = (Spinner) dialog.findViewById(R.id.category);
+        final ArrayAdapter<String> spinnerAdapter;
+        List<String> list;
+
+        list = new ArrayList<String>();
+        for (ItemCategory itemCategory : groupItems) {
+            list.add(itemCategory.getName());
+        }
+        spinnerAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),
+                android.R.layout.simple_spinner_item, list);
+        category.setAdapter(spinnerAdapter);
 
         Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
         // if button is clicked, close the custom dialog
@@ -183,18 +201,19 @@ public class StockFragment extends Fragment{
             public void onClick(View v) {
                 String nameText = name.getText().toString();
                 String descriptionText = description.getText().toString();
-                String quantityText = quantity.getText().toString();
+                String categoryText = groupItems.get(category.getSelectedItemPosition()).getId();
                 try{
-                    int quantitiyNum = Integer.parseInt(quantityText);
                     double priceNum = Double.parseDouble(price.getText().toString());
 
                     StockHandler handler = new StockHandler(getActivity().getBaseContext());
                     handler.open();
-                    handler.insertData("6", nameText, descriptionText, priceNum, quantitiyNum);
+                    handler.insertData(categoryText, nameText, descriptionText, priceNum, 100);
                     handler.close();
                     Toast.makeText(getActivity().getApplicationContext(),"Item saved",Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
-                    storeItems.add(new StoreItem(nameText,descriptionText,priceNum,quantitiyNum));
+                    StoreItem item = new StoreItem(nameText, descriptionText, priceNum, 100);
+                    item.setCategoryId(categoryText);
+                    addToCategory(item);
                     adapter.notifyDataSetChanged();
                 }
                 catch (NumberFormatException e)
@@ -205,7 +224,21 @@ public class StockFragment extends Fragment{
             }
         });
 
+        Display display = ((WindowManager) getActivity().getSystemService(getActivity().getBaseContext().WINDOW_SERVICE)).getDefaultDisplay();
+        int width = display.getWidth();
+        int height = display.getHeight();
+        dialog.getWindow().setLayout((6 * width) / 7, (4 * height) / 5);
+
         dialog.show();
+    }
+
+    private void addToCategory(StoreItem storeItem) {
+        for (ItemCategory itemcatgegory : groupItems) {
+            if (itemcatgegory.getId().equals(storeItem.getCategoryId())) {
+                itemcatgegory.getItems().add(storeItem);
+                adapter.notifyDataSetChanged();
+            }
+        }
     }
 
 

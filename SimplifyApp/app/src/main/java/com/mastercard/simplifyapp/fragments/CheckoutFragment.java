@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +48,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
     ViewPager mPager;
     ScreenSlidePagerAdapter mPagerAdapter;
     SearchView searchView;
+    StoreListAdapter adapter;
 
 
     public CheckoutFragment() {
@@ -92,7 +92,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
 
         });
         savedItems = (ListView) getView().findViewById(R.id.checkout_items);
-        savedItems.setTextFilterEnabled(true);
+        savedItems.setTextFilterEnabled(false);
         savedItems.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             @Override
@@ -114,7 +114,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         savedItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                addCheckoutItem(storeItems.get(position));
+                addCheckoutItem((StoreItem) adapter.getItem(position));
             }
 
         });
@@ -196,7 +196,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
 
         handler.close();
 
-        StoreListAdapter adapter = new StoreListAdapter(getActivity(), storeItems);
+        adapter = new StoreListAdapter(getActivity(), storeItems);
         checkoutItems = new ArrayList<>();
         calculateTotal();
         savedItems.setAdapter(adapter);
@@ -228,11 +228,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if (TextUtils.isEmpty(newText)) {
-            savedItems.clearTextFilter();
-        } else {
-            savedItems.setFilterText(newText);
-        }
+        adapter.getFilter().filter(newText);
         return true;
     }
 

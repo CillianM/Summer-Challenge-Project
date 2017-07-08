@@ -6,6 +6,7 @@
     android:transitionName="reveal">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/activity_main_appbar"
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -81,22 +82,30 @@
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:text="History"
+                android:text="Stats"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <ListView
-                android:id="@+id/item_history"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-
-            </ListView>
+            <com.github.mikephil.charting.charts.CombinedChart
+                android:id="@+id/chart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:src="@drawable/pencil"
+        app:layout_anchor="@id/activity_main_appbar"
+        app:layout_anchorGravity="bottom|right|end"
+        app:backgroundTint="@color/colorPrimary" />
 
 </android.support.design.widget.CoordinatorLayout>
 

@@ -122,7 +122,7 @@ public class CoverActivity extends AppCompatActivity {
             handler.insertData("2", "Muffin", "Chocolate muffin", 1.99, 100);
             handler.insertData("2", "Scone", "Plain scone", 1.99, 100);
             handler.insertData("2", "Cake Slice", "Cheesecake", 1.99, 100);
-            handler.insertData("1", "Apple", "Granny smith", 0.89, 100);
+            handler.insertData("1", "Apple", "Red Apple", 0.89, 100);
             handler.insertData("1", "Orange", "Simple orange", 0.89, 100);
             handler.insertData("1", "Banana", "Simple banana", 0.89, 100);
             handler.insertData("4", "Bottled Water", "Plain bottled water", 1.50, 100);

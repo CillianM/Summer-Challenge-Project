@@ -6,43 +6,90 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.mastercard.simplifyapp.adapters.TransactionListAdapter;
+import com.github.mikephil.charting.charts.CombinedChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.CombinedData;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.mastercard.simplifyapp.handlers.CategoryHandler;
 import com.mastercard.simplifyapp.handlers.StockHandler;
-import com.mastercard.simplifyapp.handlers.TransactionHandler;
+import com.mastercard.simplifyapp.objects.ItemCategory;
 import com.mastercard.simplifyapp.objects.StoreItem;
 import com.mastercard.simplifyapp.objects.Transaction;
 
 import java.util.ArrayList;
 
-import static com.mastercard.simplifyapp.utility.DbUtils.epochToDate;
-
-public class ItemViewActivity extends AppCompatActivity {
+public class ItemViewActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
 
     private CollapsingToolbarLayout collapsingToolbarLayout = null;
 
     private Drawable drawable = null;
     ArrayList<Transaction> transactions;
-    ListView itemsList;
     String itemId;
+    int itemcount = 12;
+    private ArrayList<ItemCategory> groupItems;
+    FloatingActionButton mFab;
+
+    private static final int PERCENTAGE_TO_SHOW_IMAGE = 20;
+    private int mMaxScrollSize;
+    private boolean mIsImageHidden;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_view);
-        itemsList = (ListView) findViewById(R.id.item_history);
-        itemsList.setNestedScrollingEnabled(true);
+
+        String id = getIntent().getStringExtra("id");
+        StoreItem item = getStoreItem(id);
+        itemId = id;
+
+        mFab = (FloatingActionButton) findViewById(R.id.add_item);
+
+        AppBarLayout appbar = (AppBarLayout) findViewById(R.id.activity_main_appbar);
+        appbar.addOnOffsetChangedListener(this);
+
+        CombinedChart combinedChart = (CombinedChart) findViewById(R.id.chart);
+        combinedChart.getDescription().setEnabled(false);
+        combinedChart.setDrawGridBackground(false);
+        combinedChart.setDrawBarShadow(false);
+        combinedChart.setHighlightFullBarEnabled(false);
+
+        YAxis rightAxis = combinedChart.getAxisRight();
+        rightAxis.setDrawGridLines(false);
+        rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+
+        YAxis leftAxis = combinedChart.getAxisLeft();
+        leftAxis.setDrawGridLines(false);
+        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+
+        XAxis xAxis = combinedChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTH_SIDED);
+        xAxis.setAxisMinimum(0f);
+        xAxis.setGranularity(1f);
+
+        CombinedData data = new CombinedData();
+        data.setData(getBarData());
+        data.setData(getLineData(item.getPrice()));
+        combinedChart.setData(data);
 
         Window window = this.getWindow();
 
@@ -55,16 +102,6 @@ public class ItemViewActivity extends AppCompatActivity {
         // finally change the color
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
 
-        String id = getIntent().getStringExtra("id");
-        StoreItem item = getStoreItem(id);
-        itemId = id;
-
-//        ImageView imageView = (ImageView) findViewById(R.id.item_image);
-//        ColorGenerator generator = ColorGenerator.MATERIAL;
-//        int color = generator.getRandomColor();
-//        TextDrawable drawable = TextDrawable.builder()
-//                .buildRound(item.getName().toUpperCase().substring(0, 1), Color.LTGRAY);
-//        imageView.setImageDrawable(drawable);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -74,23 +111,6 @@ public class ItemViewActivity extends AppCompatActivity {
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbarLayout.setTitle(item.getName());
-
-
-//        final LinearLayout topLayout = (LinearLayout)findViewById(R.id.layout);
-//        topLayout.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-//            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-//            @Override
-//            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-//                v.removeOnLayoutChangeListener(this);
-//                float finalRadius = (float) Math.hypot(v.getWidth(), v.getHeight());
-//                int cx1 = (topLayout.getLeft() + topLayout.getRight()) / 2;
-//                int cy1 = (topLayout.getTop() + topLayout.getBottom()) / 2;
-//                Animator anim = ViewAnimationUtils.createCircularReveal(v, cx1, cy1, 0, finalRadius);
-//                anim.setDuration(1400);
-//                anim.setInterpolator(new AccelerateDecelerateInterpolator());
-//                anim.start();
-//            }
-//        });
 
 
         TextView desc= (TextView)findViewById(R.id.desc);
@@ -148,31 +168,82 @@ public class ItemViewActivity extends AppCompatActivity {
         }
         dynamicToolbarColor();
         toolbarTextAppernce();
-        populateStoreList();
+        getCategories();
     }
 
-    void populateStoreList() {
-        TransactionHandler handler = new TransactionHandler(getBaseContext());
-        handler.open();
-        if (handler.returnAmount() > 0) {
+    private void getCategories() {
+        CategoryHandler categoryHandler = new CategoryHandler(getBaseContext());
+        categoryHandler.open();
 
-            transactions = new ArrayList<>();
-            Cursor c1 = handler.returnData();
-            if (c1.moveToFirst()) {
-                do {
-                    if (c1.getString(3).contains(itemId))
-                        transactions.add(new Transaction(c1.getString(0), c1.getFloat(1), c1.getString(2), c1.getString(3), c1.getString(4), epochToDate(Long.parseLong(c1.getString(5)))));
-                }
-                while (c1.moveToNext());
+        groupItems = new ArrayList<>();
+        Cursor c = categoryHandler.returnData();
+        if (c.moveToFirst()) {
+            do {
+                groupItems.add(new ItemCategory(c.getString(0), c.getString(1)));
             }
-
-            handler.close();
-
-            TransactionListAdapter adapter = new TransactionListAdapter(this, transactions);
-
-            itemsList.setAdapter(adapter);
+            while (c.moveToNext());
         }
+
+        categoryHandler.close();
     }
+
+    private double getRandom(double max, double min) {
+        return (Math.random() * max + min);
+    }
+
+    private int getRandom(int max, int min) {
+        return (int) (Math.random() * max + min);
+    }
+
+    private LineData getLineData(double price) {
+
+        LineData d = new LineData();
+
+        ArrayList<Entry> entries = new ArrayList<Entry>();
+
+        for (int index = 0; index < itemcount; index++)
+            entries.add(new Entry(index + 0.5f, (float) getRandom(price + 1, price - 0.5)));
+
+        LineDataSet set = new LineDataSet(entries, "Quantity");
+        set.setColor(getResources().getColor(R.color.colorAccent));
+        set.setLineWidth(2.5f);
+        set.setCircleColor(getResources().getColor(R.color.colorPrimaryDark));
+        set.setCircleRadius(5f);
+        set.setFillColor(getResources().getColor(R.color.colorPrimaryDark));
+        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        set.setDrawValues(true);
+        set.setValueTextSize(10f);
+        set.setValueTextColor(getResources().getColor(R.color.colorPrimaryDark));
+
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        d.addDataSet(set);
+
+        return d;
+    }
+
+    private BarData getBarData() {
+        ArrayList<BarEntry> entries1 = new ArrayList<>();
+
+        for (int index = 0; index < itemcount; index++) {
+            entries1.add(new BarEntry(index, getRandom(25, 25)));
+        }
+
+        BarDataSet set1 = new BarDataSet(entries1, "Price");
+        set1.setColor(getResources().getColor(R.color.colorPrimary));
+        set1.setValueTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        set1.setValueTextSize(10f);
+        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+        float groupSpace = 0.06f;
+        float barSpace = 0.02f; // x2 dataset
+        float barWidth = 0.45f; // x2 dataset
+        // (0.45 + 0.02) * 2 + 0.06 = 1.00 -> interval per "group"
+
+        BarData d = new BarData(set1);
+        d.setBarWidth(barWidth);
+        return d;
+    }
+
 
     public static Bitmap drawableToBitmap(Drawable drawable) {
         Bitmap bitmap = null;
@@ -198,14 +269,16 @@ public class ItemViewActivity extends AppCompatActivity {
 
     private void dynamicToolbarColor() {
 
-        Bitmap bitmap = drawableToBitmap(drawable);
-        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+        if (drawable != null) {
+            Bitmap bitmap = drawableToBitmap(drawable);
+            Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
 
-            @Override
-            public void onGenerated(Palette palette) {
-                collapsingToolbarLayout.setExpandedTitleColor(palette.getMutedColor(getResources().getColor(R.color.colorPrimaryDark)));
-            }
-        });
+                @Override
+                public void onGenerated(Palette palette) {
+                    collapsingToolbarLayout.setExpandedTitleColor(palette.getMutedColor(getResources().getColor(R.color.colorPrimaryDark)));
+                }
+            });
+        }
     }
 
     private void toolbarTextAppernce() {
@@ -230,5 +303,35 @@ public class ItemViewActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         ActivityCompat.finishAfterTransition(this);
+    }
+
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        if (mMaxScrollSize == 0)
+            mMaxScrollSize = appBarLayout.getTotalScrollRange();
+
+        int currentScrollPercentage = (Math.abs(verticalOffset)) * 100
+                / mMaxScrollSize;
+
+        if (currentScrollPercentage >= PERCENTAGE_TO_SHOW_IMAGE) {
+            if (!mIsImageHidden) {
+                mIsImageHidden = true;
+
+                ViewCompat.animate(mFab).scaleY(0).scaleX(0).start();
+                /**
+                 * Realize your any behavior for FAB here!
+                 **/
+            }
+        }
+
+        if (currentScrollPercentage < PERCENTAGE_TO_SHOW_IMAGE) {
+            if (mIsImageHidden) {
+                mIsImageHidden = false;
+                ViewCompat.animate(mFab).scaleY(1).scaleX(1).start();
+                /**
+                 * Realize your any behavior for FAB here!
+                 **/
+            }
+        }
     }
 }
