@@ -30,7 +30,6 @@
             fab:fab_colorNormal="@color/colorPrimary"
             fab:fab_colorPressed="@color/colorPrimary"
             fab:fab_size="normal"
-            fab:fab_label="Scan barcode"
             />
     </RelativeLayout>
 

@@ -59,7 +59,7 @@
                     android:id="@+id/confirm_transaction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/cart"
+                    android:src="@drawable/ic_cart_outline_white_24dp"
                     fab:fab_colorNormal="@color/colorPrimary"
                     fab:fab_colorPressed="@color/colorPrimary"
                     fab:fab_size="mini"
@@ -70,22 +70,11 @@
                     android:id="@+id/scan_item"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/barcode"
+                    android:src="@drawable/ic_barcode_white_24dp"
                     fab:fab_colorNormal="@color/colorPrimary"
                     fab:fab_colorPressed="@color/colorPrimary"
                     fab:fab_size="mini"
                     fab:fab_label="Scan barcode"
-                    />
-
-                <com.github.clans.fab.FloatingActionButton
-                    android:id="@+id/photo_item"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/camera"
-                    fab:fab_colorNormal="@color/colorPrimary"
-                    fab:fab_colorPressed="@color/colorPrimary"
-                    fab:fab_size="mini"
-                    fab:fab_label="Take Picture"
                     />
 
             </com.github.clans.fab.FloatingActionMenu>

@@ -41,7 +41,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
 
     ListView savedItems;
     FloatingActionMenu menu;
-    FloatingActionButton scanBarcode, takePicture, checkout;
+    FloatingActionButton scanBarcode, checkout;
     ArrayList<StoreItem> checkoutItems;
     ArrayList<StoreItem> storeItems;
     double total;
@@ -77,14 +77,6 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         });
         scanBarcode = (FloatingActionButton) getView().findViewById(R.id.scan_item);
         scanBarcode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-
-        });
-        takePicture = (FloatingActionButton) getView().findViewById(R.id.photo_item);
-        takePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

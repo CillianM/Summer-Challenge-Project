@@ -4,10 +4,10 @@
     tools:context=".SubmitCreditCardActivity">
 
     <item
-        android:id="@+id/action_reset"
+        android:id="@+id/scan_item"
         android:title="@string/title_action_reset"
         android:orderInCategory="1"
-        android:icon="@drawable/ic_reset_blue_24dp"
+        android:icon="@drawable/barcode_scan"
         app:showAsAction="always" />
 
 </menu>
