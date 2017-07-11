@@ -22,9 +22,7 @@
                 android:id="@+id/item_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/stock_icon"
-                android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax" />
+                android:background="@drawable/simplify_logo_black_landscape" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"

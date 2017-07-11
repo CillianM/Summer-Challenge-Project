@@ -22,7 +22,7 @@
                 android:id="@+id/item_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-                android:background="@drawable/stock_icon"
+                android:background="@drawable/simplify_logo_black"
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax" />
 

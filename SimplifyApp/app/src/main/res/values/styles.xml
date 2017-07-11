@@ -54,7 +54,7 @@
     <style name="expandedappbar" parent="@android:style/TextAppearance.Medium">
         <item name="android:textSize">48sp
         </item>
-        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
     </style>
 

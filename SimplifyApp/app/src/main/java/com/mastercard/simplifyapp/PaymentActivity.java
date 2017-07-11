@@ -67,8 +67,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import io.card.payment.CardIOActivity;
+import io.card.payment.CreditCard;
+
 public class PaymentActivity extends AppCompatActivity implements OnTaskCompleted,CardNfcAsyncTask.CardNfcInterface {
 
+    private static final int SCAN_REQUEST_CODE = 0;
     Bitmap qrCode;
     BitmapCreator creator;
     String qrContent;
@@ -167,6 +171,32 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
                 verifyTransaction();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == SCAN_REQUEST_CODE) {
+            if (data != null && data.hasExtra(CardIOActivity.EXTRA_SCAN_RESULT)) {
+                CreditCard scanResult = data.getParcelableExtra(CardIOActivity.EXTRA_SCAN_RESULT);
+                currentCard.setNumber(scanResult.getFormattedCardNumber());
+                currentCard.setExpMonth(scanResult.expiryMonth + "");
+                currentCard.setExpYear(scanResult.expiryYear + "");
+                currentCard.setCvc("000");
+                enableEdit();
+                setCardType(currentCard.getNumber());
+                numberText.setText(currentCard.getNumber());
+                cvvText.setText("000");
+                String expirationDate = scanResult.expiryMonth + "/" + scanResult.expiryYear;
+                expiryText.setText(expirationDate);
+            } else {
+                Toast.makeText(getApplicationContext(), "Scan Was Cancelled", Toast.LENGTH_SHORT).show();
+            }
+            // do something with resultDisplayStr, maybe display it in a textView
+            // resultTextView.setText(resultDisplayStr);
+        }
+        // else handle other activity results
     }
 
     private void flipToGray() {
@@ -428,6 +458,18 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
 
     }
 
+    public void onScanPress() {
+        Intent scanIntent = new Intent(this, CardIOActivity.class);
+
+        // customize these values to suit your needs.
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_EXPIRY, true); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_CVV, false); // default: false
+        scanIntent.putExtra(CardIOActivity.EXTRA_REQUIRE_POSTAL_CODE, false); // default: false
+
+        // MY_SCAN_REQUEST_CODE is arbitrary and is only used within this activity.
+        startActivityForResult(scanIntent, SCAN_REQUEST_CODE);
+    }
+
     public void enableEdit() {
         AnimatorSet flipIn = (AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(), R.animator.card_flip_in);
         AnimatorSet flipOut = (AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(), R.animator.card_flip_out);
@@ -477,9 +519,15 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
         Card card = handler.getCustomerCard(id);
         handler.close();
         if (card != null) {
-//            cardForm.getCardEditText().setText(card.getNumber());
-//            cardForm.getExpirationDateEditText().setText(card.getExpMonth() + card.getExpYear());
-//            cardForm.getCvvEditText().setText(card.getCvc());
+            enableEdit();
+            setCardType(card.getNumber());
+            currentCard.setNumber(card.getNumber());
+            currentCard.setCvc(card.getCvc());
+            currentCard.setExpYear(card.getExpYear());
+            currentCard.setExpMonth(card.getExpMonth());
+            numberText.setText(card.getNumber());
+            expiryText.setText(card.getExpMonth() + "/" + card.getExpYear());
+            cvvText.setText(card.getCvc());
         }
     }
 
@@ -503,7 +551,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_viewer, menu);
+        inflater.inflate(R.menu.payment_menu, menu);
         return true;
     }
 
@@ -515,7 +563,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
             case android.R.id.home:
                 finish();
                 break;
-            case R.id.action_cash:
+            case R.id.process_cash:
                 final Activity currentActivity = this;
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
@@ -549,6 +597,8 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
                         .setNegativeButton("No", dialogClickListener).show();
                 break;
 
+            case R.id.scan_card:
+                onScanPress();
             default:
                 break;
         }
