@@ -9,30 +9,22 @@
     android:weightSum="100"
     tools:context="com.mastercard.simplifyapp.PaymentActivity">
 
-    <LinearLayout
-        android:layout_weight="50"
+    <include
+        android:layout_weight="60"
+        layout="@layout/credit_card_layout"
+        android:layout_height="match_parent"
+        android:layout_width="0dp" />
+
+    <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <com.braintreepayments.cardform.view.CardForm
-            android:id="@+id/card_form"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        android:layout_weight="40">
 
         <Button
             android:id="@+id/customer_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add Customer" />
-
-    </LinearLayout>
-
-
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="50">
 
         <ImageView
             android:id="@+id/qr_image"

@@ -17,7 +17,6 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.CombinedChart;
@@ -119,53 +118,6 @@ public class ItemViewActivity extends AppCompatActivity implements AppBarLayout.
         TextView priceView = (TextView)findViewById(R.id.price);
         priceView.setText("€" + item.getPriceString());
 
-        ImageView imageView = (ImageView) findViewById(R.id.item_image);
-        if (item.getName().equals("Muffin")) {
-            drawable = getDrawable(R.drawable.muffins);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Coca Cola")) {
-            drawable = getDrawable(R.drawable.cocacola);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Apple")) {
-            drawable = getDrawable(R.drawable.apple);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Orange")) {
-            drawable = getDrawable(R.drawable.orange);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Banana")) {
-            drawable = getDrawable(R.drawable.banana);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Scone")) {
-            drawable = getDrawable(R.drawable.scones);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Cake Slice")) {
-            drawable = getDrawable(R.drawable.cake_slice);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Chocolate Bar")) {
-            drawable = getDrawable(R.drawable.chocolate);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Crisps")) {
-            drawable = getDrawable(R.drawable.crisps);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Fanta")) {
-            drawable = getDrawable(R.drawable.fanta);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Diet Coke")) {
-            drawable = getDrawable(R.drawable.diet_coke);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Bottled Water")) {
-            drawable = getDrawable(R.drawable.water);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Coffee")) {
-            drawable = getDrawable(R.drawable.coffee);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Tea")) {
-            drawable = getDrawable(R.drawable.tea);
-            imageView.setImageDrawable(drawable);
-        } else if (item.getName().equals("Lotto Ticket")) {
-            drawable = getDrawable(R.drawable.lotto);
-            imageView.setImageDrawable(drawable);
-        }
         dynamicToolbarColor();
         toolbarTextAppernce();
         getCategories();

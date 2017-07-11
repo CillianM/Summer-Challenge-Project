@@ -1,29 +1,47 @@
 package com.mastercard.simplifyapp;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.braintreepayments.cardform.view.CardForm;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -37,10 +55,15 @@ import com.mastercard.simplifyapp.handlers.TransactionHandler;
 import com.mastercard.simplifyapp.interfaces.OnTaskCompleted;
 import com.mastercard.simplifyapp.objects.Customer;
 import com.mastercard.simplifyapp.objects.Transaction;
+import com.mastercard.simplifyapp.utility.CardUtils;
+import com.mastercard.simplifyapp.view.MonoTextView;
+import com.mastercard.simplifyapp.view.WrapContentHeightViewPager;
 import com.pro100svitlo.creditCardNfcReader.CardNfcAsyncTask;
 import com.pro100svitlo.creditCardNfcReader.utils.CardNfcUtils;
 import com.simplify.android.sdk.Card;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -49,7 +72,6 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
     Bitmap qrCode;
     BitmapCreator creator;
     String qrContent;
-    CardForm cardForm;
     NfcAdapter mNfcAdapter;
     CardNfcUtils mCardNfcUtils;
     CardNfcAsyncTask mCardNfcAsyncTask;
@@ -58,12 +80,35 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
     Button customerButton;
     String customerPurchasing;
 
+    private CardView grayCard;
+    private CardView blueCard;
+    private MonoTextView numberLabel;
+    private MonoTextView expiryLabel;
+    private MonoTextView cvvLabel;
+
+    private MonoTextView numberText;
+    private MonoTextView expiryText;
+    private MonoTextView cvvText;
+
+    private TextInputEditText numberEditText;
+    private TextInputEditText expiryEditText;
+    private TextInputEditText cvvEditText;
+    WrapContentHeightViewPager pager;
+
+    private boolean showingGray = true;
+    private AnimatorSet inSet;
+    private AnimatorSet outSet;
+
+    Card currentCard = new Card();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        setupCardForm();
 
         customerPurchasing = "Unknown";
         Intent intent = getIntent();
@@ -75,14 +120,6 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
                 addCustomer();
             }
         });
-        cardForm = (CardForm) findViewById(R.id.card_form);
-        cardForm.cardRequired(true)
-                .expirationRequired(true)
-                .cvvRequired(true)
-                .postalCodeRequired(false)
-                .mobileNumberRequired(false)
-                .actionLabel("Purchase")
-                .setup(this);
 
         AdditionalData additionalData = new AdditionalData();
         additionalData.setTerminalId("45784312");
@@ -132,6 +169,274 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
         });
     }
 
+    private void flipToGray() {
+        if (!showingGray && !outSet.isRunning() && !inSet.isRunning()) {
+            showingGray = true;
+
+            blueCard.setCardElevation(0);
+            grayCard.setCardElevation(0);
+
+            outSet.setTarget(blueCard);
+            outSet.start();
+
+            inSet.setTarget(grayCard);
+            inSet.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    grayCard.setCardElevation(convertDpToPixel(12, PaymentActivity.this));
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            inSet.start();
+        }
+    }
+
+    private void flipToBlue() {
+        if (showingGray && !outSet.isRunning() && !inSet.isRunning()) {
+            showingGray = false;
+
+            grayCard.setCardElevation(0);
+            blueCard.setCardElevation(0);
+
+            outSet.setTarget(grayCard);
+            outSet.start();
+
+            inSet.setTarget(blueCard);
+            inSet.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    blueCard.setCardElevation(convertDpToPixel(12, PaymentActivity.this));
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            inSet.start();
+        }
+    }
+
+    public static float convertDpToPixel(float dp, Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float px = dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return px;
+    }
+
+    public static float convertPixelsToDp(float px, Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float dp = px / ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        return dp;
+    }
+
+    private void setupCardForm() {
+        grayCard = (CardView) findViewById(R.id.card_gray);
+        blueCard = (CardView) findViewById(R.id.card_blue);
+        numberLabel = (MonoTextView) findViewById(R.id.label_card_number);
+        expiryLabel = (MonoTextView) findViewById(R.id.label_expired_date);
+        cvvLabel = (MonoTextView) findViewById(R.id.label_cvv_code);
+
+        numberText = (MonoTextView) findViewById(R.id.text_card_number);
+        expiryText = (MonoTextView) findViewById(R.id.text_expired_date);
+        cvvText = (MonoTextView) findViewById(R.id.text_cvv_code);
+
+        numberEditText = (TextInputEditText) findViewById(R.id.input_edit_card_number);
+        expiryEditText = (TextInputEditText) findViewById(R.id.input_edit_expired_date);
+        cvvEditText = (TextInputEditText) findViewById(R.id.input_edit_cvv_code);
+
+        inSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.card_flip_in);
+        outSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.card_flip_out);
+
+        numberEditText.addTextChangedListener(new TextWatcher() {
+
+            private boolean lock;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() != 0) {
+                    flipToBlue();
+                }
+                numberText.setText(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                setCardType(s.toString());
+                if (lock || s.toString().length() > 16) {
+                    return;
+                }
+                lock = true;
+                for (int i = 4; i < s.length(); i += 5) {
+                    if (s.toString().charAt(i) != ' ') {
+                        s.insert(i, " ");
+                    }
+                }
+                lock = false;
+            }
+        });
+
+        expiryEditText.addTextChangedListener(new TextWatcher() {
+
+            private boolean lock;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                expiryText.setText(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (lock || s.length() > 4) {
+                    return;
+                }
+                lock = true;
+                if (s.length() > 2 && s.toString().charAt(2) != '/') {
+                    s.insert(2, "/");
+                }
+                lock = false;
+            }
+        });
+
+        cvvEditText.addTextChangedListener(new TextWatcher() {
+
+            private boolean lock;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                cvvText.setText(s);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+
+        PagerAdapter adapter = new MyPagerAdapter();
+        pager = (WrapContentHeightViewPager) findViewById(R.id.view_pager);
+        pager.setAdapter(adapter);
+        pager.setClipToPadding(false);
+        pager.setPadding(width / 4, 0, width / 4, 0);
+        pager.setPageMargin(width / 14);
+        pager.setPagingEnabled(false);
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        numberEditText.setFocusableInTouchMode(true);
+                        expiryEditText.setFocusable(false);
+                        cvvEditText.setFocusable(false);
+                        numberEditText.requestFocus();
+                        return;
+                    case 1:
+                        numberEditText.setFocusable(false);
+                        expiryEditText.setFocusableInTouchMode(true);
+                        cvvEditText.setFocusable(false);
+                        expiryEditText.requestFocus();
+                        return;
+                    case 2:
+                        numberEditText.setFocusable(false);
+                        expiryEditText.setFocusable(false);
+                        cvvEditText.setFocusableInTouchMode(true);
+                        cvvEditText.requestFocus();
+                        return;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+        final Activity activity = this;
+        TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    pager.setCurrentItem(pager.getCurrentItem() + 1);
+                    handled = true;
+                }
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    String expirationDate = expiryEditText.getText().toString();
+                    currentCard.setCvc("000");
+                    currentCard.setNumber(numberEditText.getText().toString().replace(" ", ""));
+                    currentCard.setExpMonth(expirationDate.substring(0, expirationDate.indexOf("/")));
+                    currentCard.setExpYear(expirationDate.substring(expirationDate.indexOf("/") + 1));
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(cvvEditText.getWindowToken(), 0);
+                    handled = true;
+                }
+                return handled;
+            }
+        };
+
+        numberEditText.setOnEditorActionListener(onEditorActionListener);
+        expiryEditText.setOnEditorActionListener(onEditorActionListener);
+        cvvEditText.setOnEditorActionListener(onEditorActionListener);
+
+    }
+
+    public void enableEdit() {
+        AnimatorSet flipIn = (AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(), R.animator.card_flip_in);
+        AnimatorSet flipOut = (AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(), R.animator.card_flip_out);
+        flipIn.setTarget(blueCard);
+        flipOut.setTarget(grayCard);
+        flipOut.start();
+        flipIn.start();
+    }
+
     @Override
     public void onBackPressed() {
         finish();
@@ -172,9 +477,9 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
         Card card = handler.getCustomerCard(id);
         handler.close();
         if (card != null) {
-            cardForm.getCardEditText().setText(card.getNumber());
-            cardForm.getExpirationDateEditText().setText(card.getExpMonth() + card.getExpYear());
-            cardForm.getCvvEditText().setText(card.getCvc());
+//            cardForm.getCardEditText().setText(card.getNumber());
+//            cardForm.getExpirationDateEditText().setText(card.getExpMonth() + card.getExpYear());
+//            cardForm.getCvvEditText().setText(card.getCvc());
         }
     }
 
@@ -288,12 +593,31 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
 
     @Override
     public void cardIsReadyToRead() {
-        cardForm.getCardEditText().setText(mCardNfcAsyncTask.getCardNumber());
+        enableEdit();
+        numberText.setText(mCardNfcAsyncTask.getCardNumber());
+        cvvText.setText("000");
         String expirationDate = mCardNfcAsyncTask.getCardExpireDate();
-        expirationDate = expirationDate.substring(0,expirationDate.indexOf("/")) + "20" + expirationDate.substring(expirationDate.indexOf("/") +1);
-        cardForm.getExpirationDateEditText().setText(expirationDate);
-        String cardType = mCardNfcAsyncTask.getCardType();
+        expirationDate = expirationDate.substring(0, expirationDate.indexOf("/")) + expirationDate.substring(expirationDate.indexOf("/"));
+        expiryText.setText(expirationDate);
+        currentCard.setCvc("000");
+        currentCard.setNumber(mCardNfcAsyncTask.getCardNumber());
+        currentCard.setExpMonth(expirationDate.substring(0, expirationDate.indexOf("/")));
+        currentCard.setExpYear(expirationDate.substring(expirationDate.indexOf("/") + 1));
+        setCardType(currentCard.getNumber());
 
+
+    }
+
+    private void setCardType(String number) {
+        ImageView cardIcon = (ImageView) findViewById(R.id.icon_card_blue);
+        if (number.startsWith("4"))
+            cardIcon.setImageDrawable(getDrawable(R.drawable.simplify_visa));
+        else if (number.startsWith("5"))
+            cardIcon.setImageDrawable(getDrawable(R.drawable.simplify_mastercard));
+        else if (number.startsWith("6"))
+            cardIcon.setImageDrawable(getDrawable(R.drawable.simplify_discover));
+        else if (number.startsWith("37"))
+            cardIcon.setImageDrawable(getDrawable(R.drawable.simplify_amex));
     }
 
     @Override
@@ -325,22 +649,31 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
         creator.execute();
     }
 
+    private boolean isValid() {
+        if (!CardUtils.isValid(Long.parseLong(currentCard.getNumber()))) {
+            return false;
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/yy");
+        simpleDateFormat.setLenient(false);
+        Date expiry = null;
+        try {
+            expiry = simpleDateFormat.parse(currentCard.getExpMonth() + "/" + currentCard.getExpYear());
+        } catch (ParseException e) {
+            return false;
+        }
+        boolean expired = expiry.before(new Date());
+        return !expired;
+    }
+
 
     void verifyTransaction() {
 
-        cardForm.validate();
-        if (cardForm.isValid()) {
-            Card card = new Card();
-            card.setCvc(cardForm.getCvv());
-            card.setNumber(cardForm.getCardNumber());
-            card.setExpMonth(cardForm.getExpirationMonth());
-            card.setExpYear(cardForm.getExpirationYear());
-            card.setAddressZip(cardForm.getCountryCode());
+        if (isValid()) {
 
             if (!customerPurchasing.equals("Unknown")) {
                 CustomerHandler handler = new CustomerHandler(getApplicationContext());
                 handler.open();
-                handler.updateCustomerCard(customerPurchasing, cardForm.getCardNumber(), cardForm.getCvv(), cardForm.getExpirationMonth() + "/" + cardForm.getExpirationYear());
+                handler.updateCustomerCard(customerPurchasing, currentCard.getNumber(), currentCard.getCvc(), currentCard.getExpMonth() + "/" + currentCard.getExpYear());
                 handler.close();
             }
 
@@ -439,5 +772,45 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
             return bmp;
         }
 
+    }
+
+    private class MyPagerAdapter extends PagerAdapter {
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            int resId = 0;
+            switch (position) {
+                case 0:
+                    resId = R.id.input_layout_card_number;
+                    break;
+                case 1:
+                    resId = R.id.input_layout_expired_date;
+                    break;
+                case 2:
+                    resId = R.id.input_layout_cvv_code;
+                    break;
+                case 3:
+                    resId = R.id.space;
+                    break;
+
+            }
+            return findViewById(resId);
+        }
+
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+        }
+
+
+        @Override
+        public int getCount() {
+            return 5;
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
     }
 }
