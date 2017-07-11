@@ -7,7 +7,7 @@
         android:id="@+id/scan_item"
         android:title="@string/title_action_reset"
         android:orderInCategory="1"
-        android:icon="@drawable/barcode_scan"
+        android:icon="@drawable/ic_barcode_white_24dp"
         app:showAsAction="always" />
 
 </menu>

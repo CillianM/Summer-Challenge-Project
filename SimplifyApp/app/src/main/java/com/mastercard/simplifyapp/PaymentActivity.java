@@ -102,6 +102,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
     private boolean showingGray = true;
     private AnimatorSet inSet;
     private AnimatorSet outSet;
+    private FloatingActionButton submit;
 
     Card currentCard = new Card();
 
@@ -164,13 +165,14 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
             onNewIntent(getIntent());
         }
 
-        FloatingActionButton submit = (FloatingActionButton) findViewById(R.id.confirm_transaction);
+        submit = (FloatingActionButton) findViewById(R.id.confirm_transaction);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 verifyTransaction();
             }
         });
+        submit.hide(false);
     }
 
     @Override
@@ -190,6 +192,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
                 cvvText.setText("000");
                 String expirationDate = scanResult.expiryMonth + "/" + scanResult.expiryYear;
                 expiryText.setText(expirationDate);
+                submit.show(true);
             } else {
                 Toast.makeText(getApplicationContext(), "Scan Was Cancelled", Toast.LENGTH_SHORT).show();
             }
@@ -446,6 +449,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
                     currentCard.setExpYear(expirationDate.substring(expirationDate.indexOf("/") + 1));
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(cvvEditText.getWindowToken(), 0);
+                    submit.show(true);
                     handled = true;
                 }
                 return handled;
@@ -521,6 +525,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
         handler.close();
         if (card != null) {
             enableEdit();
+            submit.show(true);
             setCardType(card.getNumber());
             currentCard.setNumber(card.getNumber());
             currentCard.setCvc(card.getCvc());
@@ -645,6 +650,7 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
     @Override
     public void cardIsReadyToRead() {
         enableEdit();
+        submit.show(true);
         numberText.setText(mCardNfcAsyncTask.getCardNumber());
         cvvText.setText("000");
         String expirationDate = mCardNfcAsyncTask.getCardExpireDate();
@@ -655,8 +661,6 @@ public class PaymentActivity extends AppCompatActivity implements OnTaskComplete
         currentCard.setExpMonth(expirationDate.substring(0, expirationDate.indexOf("/")));
         currentCard.setExpYear(expirationDate.substring(expirationDate.indexOf("/") + 1));
         setCardType(currentCard.getNumber());
-
-
     }
 
     private void setCardType(String number) {
