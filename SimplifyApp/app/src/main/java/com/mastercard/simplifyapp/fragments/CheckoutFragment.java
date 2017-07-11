@@ -217,6 +217,7 @@ public class CheckoutFragment extends Fragment implements SearchView.OnQueryText
         for (StoreItem item : items) {
             total += item.getPrice();
         }
+        total = round(total, 2);
 
         mPagerAdapter.notifyDataSetChanged();
     }
